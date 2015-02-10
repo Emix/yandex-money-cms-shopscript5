@@ -1,0 +1,70 @@
+<form action="?module=plugins&id=yamodule&action=save&mode=p2p" method="post" id="plugins-settings-form">
+	<div class="field">
+		<div class="name">
+			<label for="">[`Активность`]</label>
+		</div>
+		<div class="value">
+			<input{if $ya_p2p_active} checked="checked" {/if} id="ya_p2p_active" type="radio" name="ya_p2p_active" class="input" value="1">
+			<label for="ya_p2p_active">[`Включено`]</label><br/>
+			<input{if !$ya_p2p_active} checked="checked" {/if} id="ya_p2p_active" type="radio" name="ya_p2p_active" class="input" value="0">
+			<label for="ya_p2p_active">[`Выключено`]</label><br/>
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="">[`Режим работы`]</label>
+		</div>
+		<div class="value">
+			<input{if $ya_p2p_test} checked="checked" {/if} id="ya_p2p_test" type="radio" name="ya_p2p_test" class="input" value="1">
+			<label for="ya_p2p_test">[`Тест`]</label><br/>
+			<input{if !$ya_p2p_test} checked="checked" {/if} id="ya_p2p_test" type="radio" name="ya_p2p_test" class="input" value="0">
+			<label for="ya_p2p_test">[`Рабочий`]</label><br/>
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="ya_p2p_number">[`Номер кошелька yandex деньги`]</label>
+		</div>
+		<div class="value">
+			<input id="ya_p2p_number" type="text" name="ya_p2p_number" class="input" value="{$ya_p2p_number}">
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="ya_p2p_appid">[`Id приложения`]</label>
+		</div>
+		<div class="value">
+			<input id="ya_p2p_appid" type="text" name="ya_p2p_appid" class="input" value="{$ya_p2p_appid}">
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="ya_p2p_skey">[`Секретный ключ`]</label>
+		</div>
+		<div class="value">
+			<textarea id="ya_p2p_skey" name="ya_p2p_skey" class="input" value="">{$ya_p2p_skey}</textarea>
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="">[`Логирование`]</label>
+		</div>
+		<div class="value">
+			<input{if $ya_p2p_log} checked="checked" {/if} id="ya_p2p_log" type="checkbox" name="ya_p2p_log" class="input" value="1">
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="ya_p2p_callback">[`Cсылка для приема уведомлений`]</label>
+		</div>
+		<div class="value">
+			<input id="ya_p2p_callback" disabled="disabled" type="text" name="ya_p2p_callback" class="input" value="{$ya_p2p_callback}">
+		</div>
+	</div>
+	<div class="field">
+		<div class="value submit save_data">
+			<input type="submit" class="button green" value="Save">
+			<span id="plugins-settings-form-status" style="display:none"><!-- message placeholder --></span>
+		</div>
+	</div>
+</form>

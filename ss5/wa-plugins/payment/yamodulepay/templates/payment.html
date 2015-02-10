@@ -1,0 +1,82 @@
+[`Выберите метод оплаты`]
+{if $p2p}
+<form id="paymentForm" action="{$form_url}" method="post">
+	<input type="hidden" name="action" value="p2p">
+	<table class="radio" style="width: 50%;margin: 25px auto;">
+	   <tbody>
+		<tr class="highlight">
+			<td><input type="radio" name="payment-type" value="wallet" checked="" id="ym1"></td>
+			<td><label for="ym1">[`Яндекс.Деньги`]</label></td>
+		</tr>
+	   <tr class="highlight">
+			<td><input type="radio" name="payment-type" value="card" id="ym2"></td>
+			<td><label for="ym2">[`Банковская карта`]</label></td>
+		</tr>
+		</tbody>
+	</table>
+	<input id="paymentFormSubmit"  type="submit" value="[`Оплатить заказ на сайте Яндекс.Денег`]"/>
+</form>
+{/if}
+{if $kassa}
+<form id="paymentForm" action="{$form_url}" method="post" target="_blank">
+    {foreach $hidden_fields as $name => $value}
+        <input type="hidden" name="{$name}" value="{$value|escape}"/>
+    {/foreach}
+
+	<table class="radio" style="width: 50%;margin: 25px auto;">
+	   <tbody>
+	   {if $wallet}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="PC"></td>
+			<td><label for="ym1">[`Яндекс деньги`]</label></td>
+		</tr>
+		{/if}
+		{if $card}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="AC"></td>
+			<td><label for="ym1">[`Банковские карты`]</label></td>
+		</tr>
+		{/if}
+		{if $terminal}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="GP"></td>
+			<td><label for="ym1">[`Наличными`]</label></td>
+		</tr>
+		{/if}
+		{if $sms}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="MC"></td>
+			<td><label for="ym1">[`SMS`]</label></td>
+		</tr>
+		{/if}
+		{if $wm}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="WM"></td>
+			<td><label for="ym1">[`Webmoney`]</label></td>
+		</tr>
+		{/if}
+		{if $sber}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="SB"></td>
+			<td><label for="ym1">[`Сбербанк`]</label></td>
+		</tr>
+		{/if}
+		{if $alfa}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="AB"></td>
+			<td><label for="ym1">[`Альфабанк`]</label></td>
+		</tr>
+		{/if}
+		</tbody>
+	</table>
+
+    {if $auto_submit}
+        <i class="icon16 loading"></i>
+        <em>Перенаправление на сайт «Яндекс.Денег» для оплаты...</em>
+        <br/>
+        <br/>
+        
+    {/if}
+    <input id="paymentFormSubmit"  type="submit" value="[`Оплатить заказ на сайте Яндекс.Денег`]"/>
+</form>
+{/if}

@@ -1,0 +1,51 @@
+<link rel="stylesheet" type="text/css" href="{$wa_app_static_url}plugins/yamodule/css/main.css">
+<div class="tabs_ya">
+	<div id="adv-page-loader" class="on" style="display: none;"><span class="opc-spinner"></span></div>
+	<input id="moneyorg" type="radio" name="tabs" checked>
+	<label for="moneyorg" title="[`Yandex.Касса`]">[`Yandex.Касса`]</label>
+
+	<input id="money" type="radio" name="tabs" checked>
+	<label for="money" title="[`Yandex.Деньги p2p`]">[`Yandex.Деньги p2p`]</label>
+
+	<input id="metrika" type="radio" name="tabs" checked>
+	<label for="metrika" title="[`Yandex.Метрика`]">[`Yandex.Метрика`]</label>
+
+	<input id="market" type="radio" name="tabs" checked>
+	<label for="market" title="[`Yandex.Маркет`]">[`Yandex.Маркет`]</label>
+
+	<input id="marketp" type="radio" name="tabs" checked>
+	<label for="marketp" title="[`Yandex.Покупки Маркет`]">[`Yandex.Покупки Маркет`]</label>
+
+	<section id="money">
+		<div class="p2p_errors"></div>
+		{include file='./p2p.html' inline}
+	</section>
+	<section id="moneyorg">
+		<div class="kassa_errors"></div>
+		{include file="./kassa.html" inline}
+	</section>
+	<section id="metrika">
+		<div class="metrika_errors"></div>
+		{include file="./metrika.html" inline}
+		<div id="iframe_container"></div>
+	</section>
+	<section id="market">
+		<div class="market_errors"></div>
+		{include file="./market.html" inline}
+	</section>
+	<section id="marketp">
+		<div class="pokupki_errors"></div>
+		{include file="./pokupki.html" inline}
+	</section>
+</div>
+<script type="text/javascript" src="{$wa_app_static_url}plugins/yamodule/js/jquery.total-storage.js"></script>
+<script type="text/javascript" src="{$wa_app_static_url}plugins/yamodule/js/back.js"></script>
+<script type="text/javascript">
+
+</script>
+<style>
+.field .value input[type="text"] {
+	width: 60% !important;
+}
+
+</style>
