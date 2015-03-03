@@ -54,6 +54,35 @@
 			<input id="ya_market_price" type="text" name="ya_market_price" class="input" value="{$ya_market_price}">
 		</div>
 	</div>
+	<div class="field cat_import" style="display:none;">
+		<div class="name">
+			<label for="ya_market_price">[`Категории для Импорта`]</label>
+		</div>
+		<div class="value">
+			<div class="panel panel-default">
+				<div class="tree-panel-heading tree-panel-heading-controls clearfix">
+					<div class="tree-actions pull-right">
+						<a onclick="hidecatall($('#categoryBox')); return false;" id="collapse-all-categoryBox" class="btn btn-default">
+							<i class="icon-collapse-alt"></i>[`Свернуть все`]
+						</a>
+						<a onclick="showcatall($('#categoryBox')); return false;" id="expand-all-categoryBox" class="btn btn-default">
+							<i class="icon-expand-alt"></i>[`Показать все`]
+						</a>
+						<a onclick="checkAllAssociatedCategories($('#categoryBox')); return false;" id="check-all-categoryBox" class="btn btn-default">
+							<i class="icon-check-sign"></i>[`Отметить всё`]
+						</a>
+						<a onclick="uncheckAllAssociatedCategories($('#categoryBox')); return false;" id="uncheck-all-categoryBox" class="btn btn-default">
+							<i class="icon-check-empty"></i>[`Снять отметки`]
+						</a>
+					</div>
+				</div>	
+				<ul id="categoryBox" class="tree">
+					{$treeCat}
+				</ul>
+			</div>
+		</div>
+	</div>
+	
 	<div class="field">
 		<div class="name">
 			<label for="ya_market_price">[`Валюта прайса`]</label>
@@ -123,6 +152,15 @@
 		</div>
 		<div class="value">
 			<input id="ya_market_yml" disabled="disabled" type="text" name="ya_market_yml" class="input" value="{$ya_market_yml}">
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label></label>
+		</div>
+		<div class="value">
+			<p class="hint" style="margin-bottom:0px;"><br><i class="icon10 exclamation"></i> [`Если товар не принадлежит ни одной категории, то он не будет экспортирован в YML-файл.`]</p>
+			<p class="hint" style="margin-bottom:0px;"><i class="icon10 exclamation"></i> [`Если товар имеет цену, менее чем 0.5, то он не будет экспортирован в YML-файл.`]</p>
 		</div>
 	</div>
 	<div class="field">

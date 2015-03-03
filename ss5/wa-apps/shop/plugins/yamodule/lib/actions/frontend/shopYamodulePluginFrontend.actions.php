@@ -441,6 +441,7 @@ class shopYamodulePluginFrontendActions extends waActions
         $plugin = wa()->getPlugin('yamodule');
 		$sm = new waAppSettingsModel();
 		$settings = $sm->get('shop.yamodule');
+		$settings['ya_market_categories'] = unserialize($settings['ya_market_categories']);
 		$market = new YaMarket();
 		$market->from_charset = 'utf-8';
 		$market->homeprice = $settings['ya_market_price'];
@@ -507,7 +508,13 @@ class shopYamodulePluginFrontendActions extends waActions
 		$data = array();
 		foreach ($products as $product)
 		{
-			if ($product['price'] >= 0.5 && $product['category_id'])
+			if (!$settings['ya_market_selected'])
+			{
+				if (!in_array($product['category_id'], $settings['ya_market_categories']))
+					continue;
+			}
+
+			if ($product['price'] >= 0.5 &&	$product['category_id'])
 			{
 				if ($settings['ya_market_available'] && (!$product['status']))
 					continue;
@@ -575,7 +582,6 @@ class shopYamodulePluginFrontendActions extends waActions
 							elseif ($settings['ya_market_set_available'] == 4)
 								$available_sku = false;
 
-							// waSystem::dieo($available_sku);
 							$sku_data = array();
 							$sku_data = $data;
 							$sku_data['id'] .= 'c'.$sku['id'];

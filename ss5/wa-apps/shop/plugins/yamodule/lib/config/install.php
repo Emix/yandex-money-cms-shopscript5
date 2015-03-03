@@ -87,6 +87,7 @@ $data_db = array(
 	'ya_market_vendor' => '',
 	'ya_pokupki_rate' => '',
 	'ya_market_currency' => 'RUB',
+	'ya_market_categories' => '',
 	'ya_plugin_contact' => '',
 	'type' => 'metrika',
 );

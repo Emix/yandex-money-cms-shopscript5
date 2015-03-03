@@ -77,7 +77,7 @@ class shopYamodulePlugin extends shopPlugin {
 		$this->sendSettings($_POST, waRequest::request('mode'));
 		foreach ($_POST as $k => $v)
 		{
-			if ($k == 'ya_pokupki_carrier' || $k == 'ya_pokupki_rate')
+			if ($k == 'ya_pokupki_carrier' || $k == 'ya_pokupki_rate' || $k == 'ya_market_categories')
 				$v = serialize($v);
 
 			$sm->set('shop.yamodule' , $k, $v);
@@ -123,7 +123,6 @@ class shopYamodulePlugin extends shopPlugin {
 
 		$all_ok = _w('Все настройки верно заполнены!');
 		$arr = array('p2p', 'kassa', 'market', 'pokupki', 'metrika');
-		// waSystem::dieo($this->errors);
 		if (waRequest::request('mode') == 'metrika')
 		{
 			require_once __DIR__.'/../api/metrika.php';
