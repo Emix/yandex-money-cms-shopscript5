@@ -1,5 +1,5 @@
 <link rel="stylesheet" type="text/css" href="{$wa_app_static_url}plugins/yamodule/css/main.css">
-<div class="tabs_ya">
+<div class="tabs_ya bootstrap">
 	<div id="adv-page-loader" class="on" style="display: none;"><span class="opc-spinner"></span></div>
 	<input id="moneyorg" type="radio" name="tabs" checked>
 	<label for="moneyorg" title="[`Yandex.Касса`]">[`Yandex.Касса`]</label>
@@ -49,3 +49,100 @@
 }
 
 </style>
+<script type="text/javascript">
+function showcatall($tree)
+{
+$tree.find("ul.tree").each(
+	function()
+	{
+		$(this).slideDown();
+	}
+);
+}
+
+function hidecatall($tree)
+{
+$tree.find("ul.tree").each(
+	function()
+	{
+		$(this).slideUp();
+	}
+);
+}
+function checkAllAssociatedCategories($tree)
+{
+$tree.find(":input[type=checkbox]").each(
+	function()
+	{
+		$(this).prop("checked", true);
+		$(this).parent().addClass("tree-selected");
+	}
+);
+}
+
+function uncheckAllAssociatedCategories($tree)
+{
+$tree.find(":input[type=checkbox]").each(
+	function()
+	{
+		$(this).prop("checked", false);
+		$(this).parent().removeClass("tree-selected");
+	}
+);
+}
+
+function trCat(open)
+{
+	if (open == 0)
+		$('.cat_import').slideDown();
+	else
+		$('.cat_import').slideUp();
+}
+
+$(document).ready(function(){
+	$('.tree-item-name label').click(function(){
+		$(this).parent().find('input').click();
+	});
+
+	if ($('#ya_market_selected:checked').val() == 1)
+		trCat(1);
+	else
+		trCat(0);
+	$('#ya_market_selected').live('change', function(){
+		trCat($(this).val());
+	});
+
+	$('.tree-folder-name input').change(function(){
+		if ($(this).prop("checked"))
+		{
+			$(this).parent().addClass("tree-selected");
+			$(this).parents('.tree-folder').first().find('ul input').prop("checked", true).parent().addClass("tree-selected");
+		}
+		else
+		{
+			$(this).parent().removeClass("tree-selected");
+			$(this).parents('.tree-folder').first().find('ul input').prop("checked", false).parent().removeClass("tree-selected");
+		}
+	});
+
+	$('.tree-toggler').click(function(){
+		$(this).parents('.tree-folder').first().find('ul').slideToggle('slow');
+	});
+
+	$('.tree input').change(function(){
+		if ($(this).prop("checked"))
+		{
+			$(this).parent().addClass("tree-selected");
+		}
+		else
+		{
+			$(this).parent().removeClass("tree-selected");
+		}
+	});
+
+	var market_cat = {$ya_market_categories|json_encode};
+	for (i in market_cat)
+		if (market_cat[i])
+			$('#categoryBox input[value="'+ market_cat[i] +'"]').prop("checked", true).change();
+});
+</script>

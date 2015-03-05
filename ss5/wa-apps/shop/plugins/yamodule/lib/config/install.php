@@ -87,6 +87,7 @@ $data_db = array(
 	'ya_market_vendor' => '',
 	'ya_pokupki_rate' => '',
 	'ya_market_currency' => 'RUB',
+	'ya_market_categories' => '',
 	'ya_plugin_contact' => '',
 	'type' => 'metrika',
 );
@@ -95,13 +96,21 @@ if ($s)
 	foreach ($data_db as $k => $val)
 		$app_settings_model->set($plugin_id, $k, $val);
 
-$user = new waContact();
-$user['firstname'] = 'Yandex';
-$user['lastname'] = 'Buy';
-$user['email'] = 'yandex@buy.rux';
-$user['create_datetime'] = date('Y-m-d H:i:s');
-$user['create_app_id'] = 'shop';
-$user['password'] = base64_decode('000000');
-$errors_c = $user->save();
+$contact = new waContactEmailsModel();
+$contact_id = $contact->getContactIdByEmail('yandex@buy.rux');
 
-$app_settings_model->set($plugin_id, 'ya_plugin_contact', $user->getId());
+if (!$contact_id)
+{
+	$user = new waContact();
+	$user['firstname'] = 'Yandex';
+	$user['lastname'] = 'Buy';
+	$user['email'] = 'yandex@buy.rux';
+	$user['create_datetime'] = date('Y-m-d H:i:s');
+	$user['create_app_id'] = 'shop';
+	$user['password'] = base64_decode('000000');
+	$errors_c = $user->save();
+
+	$app_settings_model->set($plugin_id, 'ya_plugin_contact', $user->getId());
+}
+else
+	$app_settings_model->set($plugin_id, 'ya_plugin_contact', $contact_id);

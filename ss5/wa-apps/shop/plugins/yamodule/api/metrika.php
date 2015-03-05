@@ -155,7 +155,6 @@ Class YaMetrika
 		if($response->status_code == 200){
 			return $data;
 		}else{
-			// $this->log_save($response->body);
 			$_SESSION['metrika_status'][] = $this->errors_alert($response->body);
 		}
 	}

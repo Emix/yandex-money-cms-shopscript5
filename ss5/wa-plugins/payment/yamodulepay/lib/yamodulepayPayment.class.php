@@ -106,7 +106,6 @@ class yamodulepayPayment extends waPayment implements waIPayment
 			$view->assign('card', $data['ya_kassa_card']);
 			$view->assign('wallet', $data['ya_kassa_wallet']);
 			$view->assign('hidden_fields', $hidden_fields);
-			// waSystem::dieo($data);
 		}
 
 		if ($p2p)
@@ -123,7 +122,6 @@ class yamodulepayPayment extends waPayment implements waIPayment
 
     protected function callbackInit($request)
     {
-		// waSystem::dieo($_SESSION);
         if (!empty($_POST['orderNumber']) && $_POST['action'] == 'paymentAviso')
 		{
 			$match = explode('_', $_POST['orderNumber']);
@@ -146,7 +144,7 @@ class yamodulepayPayment extends waPayment implements waIPayment
 
 	public static function log_save($logtext)
 	{
-		$real_log_file = './'.date('Y-m-d').'.log';
+		$real_log_file = './ya_logs/'.date('Y-m-d').'.log';
 		$h = fopen($real_log_file , 'ab');
 		fwrite($h, date('Y-m-d H:i:s ') . '[' . addslashes($_SERVER['REMOTE_ADDR']) . '] ' . $logtext . "\n");
 		fclose($h);
@@ -160,7 +158,6 @@ class yamodulepayPayment extends waPayment implements waIPayment
      */
     protected function callbackHandler($request)
     {
-		$this->log_save(serialize(waRequest::request()));
 		require_once __DIR__.'/../api/yamoney.php';
 		require_once __DIR__.'/../../../../wa-apps/shop/lib/model/shopOrder.model.php';
 		$order_model = new shopOrderModel();

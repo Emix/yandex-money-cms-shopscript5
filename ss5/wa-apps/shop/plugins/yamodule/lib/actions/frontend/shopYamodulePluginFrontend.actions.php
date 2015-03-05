@@ -69,9 +69,6 @@ class shopYamodulePluginFrontendActions extends waActions
 		else
 		{
 			$json = file_get_contents("php://input");
-			$this->log_save($json);// 9 1c3
-			// $json = '{"cart":{"currency":"RUR","items":[{"feedId":392329,"offerId":"9","feedCategoryId":"5","offerName":"9_tovar","count":1}],"delivery":{"region":{"id":13,"name":"Тамбов","type":"CITY","parent":{"id":10802,"name":"Тамбовская область","type":"SUBJECT_FEDERATION","parent":{"id":3,"name":"Центральный федеральный округ","type":"COUNTRY_DISTRICT","parent":{"id":225,"name":"Россия","type":"COUNTRY"}}}}}}}';
-			// $json = '{"cart":{"currency":"RUR","items":[{"feedId":392329,"offerId":"1c3","feedCategoryId":"1","offerName":"1c3_tovar","count":1}],"delivery":{"region":{"id":13,"name":"Тамбов","type":"CITY","parent":{"id":10802,"name":"Тамбовская область","type":"SUBJECT_FEDERATION","parent":{"id":3,"name":"Центральный федеральный округ","type":"COUNTRY_DISTRICT","parent":{"id":225,"name":"Россия","type":"COUNTRY"}}}}}}}';
 			if (!$json)
 			{
 				header('HTTP/1.0 404 Not Found');
@@ -215,7 +212,6 @@ class shopYamodulePluginFrontendActions extends waActions
 					)
 				);
 
-				// waSystem::dieo($array);
 				die(json_encode($array));
 			}
 		}
@@ -243,10 +239,7 @@ class shopYamodulePluginFrontendActions extends waActions
 			else
 			{
 				$json = file_get_contents("php://input");
-				$this->log_save($json);// 9 1c3
-				// $json = '{"order":{"id":232471,"fake":true,"currency":"RUR","delivery":{"type":"POST","price":100,"serviceName":"ShopLogistics - Курьерская доставка","id":"11","dates":{"fromDate":"03-02-2015","toDate":"03-02-2015"},"region":{"id":13,"name":"Тамбов","type":"CITY","parent":{"id":10802,"name":"Тамбовская область","type":"SUBJECT_FEDERATION","parent":{"id":3,"name":"Центральный федеральный округ","type":"COUNTRY_DISTRICT","parent":{"id":225,"name":"Россия","type":"COUNTRY"}}}},"address":{"country":"Россия","postcode":"333","city":"Тамбов","street":"2-ой почтовый11","house":"8","block":"392030"}},"items":[{"feedId":392329,"offerId":"1c3","feedCategoryId":"1","offerName":"1c3_tovar","price":2000,"count":1,"delivery":true},{"feedId":392329,"offerId":"23","feedCategoryId":"1","offerName":"23_tovar","price":860,"count":1,"delivery":true}],"notes":"ntcn"}}';
-				// $json = '{"order":{"id":232363,"fake":true,"currency":"RUR","paymentType":"POSTPAID","paymentMethod":"CASH_ON_DELIVERY","status":"CANCELLED","substatus":"USER_REFUSED_DELIVERY","creationDate":"03-02-2015 12:59:06","itemsTotal":9080,"total":9180,"delivery":{"type":"POST","price":100,"serviceName":"Courier","id":"8","dates":{"fromDate":"03-02-2015","toDate":"03-02-2015"},"region":{"id":13,"name":"Тамбов","type":"CITY","parent":{"id":10802,"name":"Тамбовская область","type":"SUBJECT_FEDERATION","parent":{"id":3,"name":"Центральный федеральный округ","type":"COUNTRY_DISTRICT","parent":{"id":225,"name":"Россия","type":"COUNTRY"}}}},"address":{"country":"Россия","postcode":"333","city":"Тамбов","street":"2-ой почтовый11","house":"8","block":"392030","apartment":"99","recipient":"Макс Беспечальных","phone":"9202343319"}},"buyer":{"id":"gHd7sXHpVDxmm72Fi2jmaw==","lastName":"Беспечальных","firstName":"Макс","phone":"9202343319","email":"esyara1@yandex.ru"},"items":[{"feedId":392329,"offerId":"14","feedCategoryId":"5","offerName":"14_tovar","price":850,"count":3},{"feedId":392329,"offerId":"1c2","feedCategoryId":"1","offerName":"1c2_tovar","price":1800,"count":2},{"feedId":392329,"offerId":"1c15","feedCategoryId":"1","offerName":"1c15_tovar","price":2830,"count":1},{"feedId":392329,"offerId":"3c21","feedCategoryId":"3","offerName":"3c21_tovar","price":100,"count":1}],"notes":"ntcn"}}';
-				// $json = '{"order":{"id":234218,"fake":true,"currency":"RUR","paymentType":"PREPAID","paymentMethod":"YANDEX","status":"PROCESSING","creationDate":"09-02-2015 09:51:35","itemsTotal":1780,"total":2980,"delivery":{"type":"POST","price":1200,"serviceName":"ShopLogistics - Курьерская доставка","id":"11","dates":{"fromDate":"09-02-2015","toDate":"09-02-2015"},"region":{"id":213,"name":"Москва","type":"CITY","parent":{"id":1,"name":"Москва и Московская область","type":"SUBJECT_FEDERATION","parent":{"id":3,"name":"Центральный федеральный округ","type":"COUNTRY_DISTRICT","parent":{"id":225,"name":"Россия","type":"COUNTRY"}}}},"address":{"country":"Россия","postcode":"325963","city":"Москва","street":"главная","house":"1","block":"2","apartment":"3","recipient":"макс прив","phone":"0987654"}},"buyer":{"id":"gHd7sXHpVDxmm72Fi2jmaw==","lastName":"прив","firstName":"макс","phone":"0987654","email":"esyara1@yandex.ru"},"items":[{"feedId":392329,"offerId":"1c13","feedCategoryId":"1","offerName":"test_man2 1c13_tovar","price":1780,"count":1}],"notes":"камент)"}}';
+				$this->log_save($json);
 				if (!$json)
 				{
 					header('HTTP/1.0 404 Not Found');
@@ -441,6 +434,7 @@ class shopYamodulePluginFrontendActions extends waActions
         $plugin = wa()->getPlugin('yamodule');
 		$sm = new waAppSettingsModel();
 		$settings = $sm->get('shop.yamodule');
+		$settings['ya_market_categories'] = unserialize($settings['ya_market_categories']);
 		$market = new YaMarket();
 		$market->from_charset = 'utf-8';
 		$market->homeprice = $settings['ya_market_price'];
@@ -507,7 +501,13 @@ class shopYamodulePluginFrontendActions extends waActions
 		$data = array();
 		foreach ($products as $product)
 		{
-			if ($product['price'] >= 0.5 && $product['category_id'])
+			if (!$settings['ya_market_selected'])
+			{
+				if (!in_array($product['category_id'], $settings['ya_market_categories']))
+					continue;
+			}
+
+			if ($product['price'] >= 0.5 &&	$product['category_id'])
 			{
 				if ($settings['ya_market_available'] && (!$product['status']))
 					continue;
@@ -575,7 +575,6 @@ class shopYamodulePluginFrontendActions extends waActions
 							elseif ($settings['ya_market_set_available'] == 4)
 								$available_sku = false;
 
-							// waSystem::dieo($available_sku);
 							$sku_data = array();
 							$sku_data = $data;
 							$sku_data['id'] .= 'c'.$sku['id'];
@@ -649,7 +648,7 @@ class shopYamodulePluginFrontendActions extends waActions
 
 	public static function log_save($logtext)
 	{
-		$real_log_file = './'.date('Y-m-d').'.log';
+		$real_log_file = './ya_logs/'.date('Y-m-d').'.log';
 		$h = fopen($real_log_file , 'ab');
 		fwrite($h, date('Y-m-d H:i:s ') . '[' . addslashes($_SERVER['REMOTE_ADDR']) . '] ' . $logtext . "\n");
 		fclose($h);

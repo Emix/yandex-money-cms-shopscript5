@@ -122,8 +122,8 @@ $.fn.serializeArray = function (options) {
             }) :
             {
                 name: elem.name,
-                value: (o.checkboxesAsBools && this.type === 'checkbox') ? //moar ternaries!
-                    (this.checked ? 1 : 0) :
+                value: (o.checkboxesAsBools && this.type === 'checkbox') ?
+                    ((this.name != 'ya_market_categories[]') ? (this.checked ? 1 : 0) : (this.checked ? val : '')) :
                     val
             };
         }).get();
