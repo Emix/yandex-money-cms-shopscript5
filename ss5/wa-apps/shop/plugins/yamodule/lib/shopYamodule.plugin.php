@@ -2,43 +2,6 @@
 
 class shopYamodulePlugin extends shopPlugin {
 
-    public function sendSettings($post, $action)
-	{
-		$array = array(
-			'cms' => 'shopscript5',
-			'module' => $action,
-			'adminemail' => 'test@mail.ru'
-		);
-
-		$post = array_merge($post, $array);
-		$url = 'http://stat.ymwork.ru/index.php';
-		$curlOpt = array(
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLINFO_HEADER_OUT => 1,
-            CURLOPT_MAXREDIRS => 3,
-            CURLOPT_CONNECTTIMEOUT => 30,
-            CURLOPT_TIMEOUT => 80,
-			CURLOPT_PUT => 1,
-			CURLOPT_BINARYTRANSFER => 1,
-			CURLOPT_REFERER => $_SERVER['SERVER_NAME']
-        );
-
-		$headers[] = 'Content-Type: application/x-yametrika+json';
-		$body = json_encode($post);
-		$fp = fopen('php://temp/maxmemory:256000', 'w');
-		fwrite($fp, $body);
-		fseek($fp, 0);
-		$curlOpt[CURLOPT_INFILE] = $fp; // file pointer
-		$curlOpt[CURLOPT_INFILESIZE] = strlen($body);
-        $curl = curl_init($url);
-        curl_setopt_array($curl, $curlOpt);
-        $rbody = curl_exec($curl);
-        $errno = curl_errno($curl);
-        $error = curl_error($curl);
-        $rcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
-	}
-
 	public function gocurl($type, $post)
 	{
 		$url = 'https://oauth.yandex.ru/token';
@@ -74,7 +37,7 @@ class shopYamodulePlugin extends shopPlugin {
 	{
 		$sm = new waAppSettingsModel();
 		$data = $sm->get('shop.yamodule');
-		$this->sendSettings($_POST, waRequest::request('mode'));
+		// $this->sendSettings($_POST, waRequest::request('mode'));
 		foreach ($_POST as $k => $v)
 		{
 			if ($k == 'ya_pokupki_carrier' || $k == 'ya_pokupki_rate' || $k == 'ya_market_categories')
