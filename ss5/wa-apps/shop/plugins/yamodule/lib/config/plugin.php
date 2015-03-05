@@ -1,8 +1,8 @@
 <?php
 
 return array(
-    'name' => 'Ya CMS Shop-Script 5',
-    'description' => 'Набор модулей yandex',
+    'name' => 'Y.CMS Shop-Script 5',
+    'description' => 'Набор модулей Яндекс (Яндекс.Деньги, Яндекс.Маркет, Яндекс.Метрика)',
     'vendor' => '98765',
     'version' => '1.0.0',
     'img' => '/img/logo.png',
