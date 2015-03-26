@@ -88,8 +88,7 @@ class yamodulepayPayment extends waPayment implements waIPayment
 		{
 			$hidden_fields = array(
 				'scid' => $data['ya_kassa_scid'],
-				'ShopID' => $data['ya_kassa_shopid'],
-				'CustomerNumber' => $order_data['customer_contact_id'],
+				'shopid' => $data['ya_kassa_shopid'],
 				'customerNumber' => $order_data['customer_contact_id'],
 				'orderNumber' => $this->app_id.'_'.$this->merchant_id.'_'.$order_data['order_id'],
 				'Sum' => number_format($order_data['amount'], 2, '.', ''),
@@ -105,6 +104,8 @@ class yamodulepayPayment extends waPayment implements waIPayment
 			$view->assign('terminal', $data['ya_kassa_terminal']);
 			$view->assign('card', $data['ya_kassa_card']);
 			$view->assign('wallet', $data['ya_kassa_wallet']);
+			$view->assign('pb', $data['ya_kassa_pb']);
+			$view->assign('ma', $data['ya_kassa_ma']);
 			$view->assign('hidden_fields', $hidden_fields);
 		}
 

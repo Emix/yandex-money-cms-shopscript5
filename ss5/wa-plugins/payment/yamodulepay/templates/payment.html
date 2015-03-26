@@ -28,45 +28,58 @@
 	   {if $wallet}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="PC"></td>
-			<td><label for="ym1">[`Яндекс.Деньги`]</label></td>
+			<td><label for="ym1">[`Оплата из кошелька в Яндекс.Деньгах.`]</label></td>
 		</tr>
 		{/if}
 		{if $card}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="AC"></td>
-			<td><label for="ym1">[`Банковские карты`]</label></td>
+			<td><label for="ym1">[`Оплата с произвольной банковской карты.`]</label></td>
 		</tr>
 		{/if}
 		{if $terminal}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="GP"></td>
-			<td><label for="ym1">[`Наличными`]</label></td>
+			<td><label for="ym1">[`Оплата наличными через кассы и терминалы.`]</label></td>
 		</tr>
 		{/if}
 		{if $sms}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="MC"></td>
-			<td><label for="ym1">[`Счет мобильного телефона`]</label></td>
+			<td><label for="ym1">[`Платеж со счета мобильного телефона.`]</label></td>
 		</tr>
 		{/if}
 		{if $wm}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="WM"></td>
-			<td><label for="ym1">[`WebMoney`]</label></td>
+			<td><label for="ym1">[`Оплата из кошелька в системе WebMoney.`]</label></td>
 		</tr>
 		{/if}
 		{if $sber}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="SB"></td>
-			<td><label for="ym1">[`Сбербанк Онлайн`]</label></td>
+			<td><label for="ym1">[`Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн.`]</label></td>
 		</tr>
 		{/if}
 		{if $alfa}
 		<tr class="highlight">
 			<td><input type="radio" name="paymentType" value="AB"></td>
-			<td><label for="ym1">[`Альфа-Клик`]</label></td>
+			<td><label for="ym1">[`Оплата через Альфа-Клик.`]</label></td>
 		</tr>
 		{/if}
+		{if $ma}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="MA"></td>
+			<td><label for="ym1">[`Оплата через MasterPass.`]</label></td>
+		</tr>
+		{/if}
+		{if $pb}
+		<tr class="highlight">
+			<td><input type="radio" name="paymentType" value="PB"></td>
+			<td><label for="ym1">[`Оплата через Промсвязьбанк.`]</label></td>
+		</tr>
+		{/if}
+		
 		</tbody>
 	</table>
 
@@ -79,4 +92,9 @@
     {/if}
     <input id="paymentFormSubmit"  type="submit" value="[`Оплатить заказ на сайте Яндекс.Денег`]"/>
 </form>
+<script>
+	$(document).ready(function(){
+		$('input[name="paymentType"]').first().attr('checked', true);
+	})
+</script>
 {/if}

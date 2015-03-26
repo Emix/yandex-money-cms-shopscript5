@@ -51,19 +51,23 @@
 		</div>
 		<div class="value">
 			<input{if $ya_kassa_wallet} checked="checked" {/if} id="ya_kassa_wallet" type="checkbox" name="ya_kassa_wallet" class="input" value="1">
-			<label for="ya_kassa_wallet">[`Яндекс.Деньги`]</label><br/>
+			<label for="ya_kassa_wallet">[`Оплата из кошелька в Яндекс.Деньгах.`]</label><br/>
 			<input{if $ya_kassa_card} checked="checked" {/if} id="ya_kassa_card" type="checkbox" name="ya_kassa_card" class="input" value="1">
-			<label for="ya_kassa_card">[`Банковские карты`]</label><br/>
+			<label for="ya_kassa_card">[`Оплата с произвольной банковской карты.`]</label><br/>
 			<input{if $ya_kassa_terminal} checked="checked" {/if} id="ya_kassa_terminal" type="checkbox" name="ya_kassa_terminal" class="input" value="1">
-			<label for="ya_kassa_terminal">[`Наличными`]</label><br/>
+			<label for="ya_kassa_terminal">[`Оплата наличными через кассы и терминалы.`]</label><br/>
 			<input{if $ya_kassa_sms} checked="checked" {/if} id="ya_kassa_sms" type="checkbox" name="ya_kassa_sms" class="input" value="1">
-			<label for="ya_kassa_sms">[`Счет мобильного телефона`]</label><br/>
+			<label for="ya_kassa_sms">[`Платеж со счета мобильного телефона.`]</label><br/>
 			<input{if $ya_kassa_wm} checked="checked" {/if} id="ya_kassa_wm" type="checkbox" name="ya_kassa_wm" class="input" value="1">
-			<label for="ya_kassa_wm">[`WebMoney`]</label><br/>
+			<label for="ya_kassa_wm">[`Оплата из кошелька в системе WebMoney.`]</label><br/>
 			<input{if $ya_kassa_sber} checked="checked" {/if} id="ya_kassa_sber" type="checkbox" name="ya_kassa_sber" class="input" value="1">
-			<label for="ya_kassa_sber">[`Сбербанк Онлайн`]</label><br/>
+			<label for="ya_kassa_sber">[`Оплата через Сбербанк: оплата по SMS или Сбербанк Онлайн.`]</label><br/>
 			<input{if $ya_kassa_alfa} checked="checked" {/if} id="ya_kassa_alfa" type="checkbox" name="ya_kassa_alfa" class="input" value="1">
-			<label for="ya_kassa_alfa">[`Альфа-Клик`]</label><br/>
+			<label for="ya_kassa_alfa">[`Оплата через Альфа-Клик.`]</label><br/>
+			<input{if $ya_kassa_pb} checked="checked" {/if} id="ya_kassa_pb" type="checkbox" name="ya_kassa_pb" class="input" value="1">
+			<label for="ya_kassa_pb">[`Оплата через Промсвязьбанк.`]</label><br/>
+			<input{if $ya_kassa_ma} checked="checked" {/if} id="ya_kassa_ma" type="checkbox" name="ya_kassa_ma" class="input" value="1">
+			<label for="ya_kassa_ma">[`Оплата через MasterPass.`]</label><br/>
 		</div>
 	</div>
 	<div class="field">
