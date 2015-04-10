@@ -33,11 +33,61 @@ class shopYamodulePlugin extends shopPlugin {
 		else
 			die($result);
 	}
+
+	public function sendStatistics()
+	{
+		$headers = array();
+		require_once __DIR__.'/../api/YM_cryptor.php';
+		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+		$sm = new waAppSettingsModel();
+		$data = $sm->get('shop.yamodule');
+		$data_shop = $sm->get('webasyst');
+
+		$array = array(
+			'url' => $data_shop['url'],
+			'cms' => 'shop-script5',
+			'version' => wa()->getVersion('webasyst'),
+			'email' => $data_shop['email'],
+			'shopid' => $data['ya_kassa_shopid'],
+			'settings' => array(
+				'kassa' => $data['ya_kassa_active'],
+				'p2p' => $data['ya_p2p_active'],
+				'metrika' => $data['ya_metrika_active'],
+			)
+		);
+
+		$key_crypt = gethostbyname($_SERVER['HTTP_HOST']);
+		$crypt = new YM_cryptor();
+		$crypt->setKey($key_crypt);
+		$array_crypt = $crypt->encrypt($array);
+
+		$url = 'https://statcms.yamoney.ru/';
+		$curlOpt = array(
+			CURLOPT_HEADER => false,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_SSL_VERIFYPEER => false,
+			CURLOPT_SSL_VERIFYHOST => false,
+			CURLINFO_HEADER_OUT => true,
+			CURLOPT_POST => true,
+		);
+
+		$curlOpt[CURLOPT_HTTPHEADER] = $headers;
+		$curlOpt[CURLOPT_POSTFIELDS] = http_build_query(array('data' => $array_crypt));
+
+		$curl = curl_init($url);
+		curl_setopt_array($curl, $curlOpt);
+		$rbody = curl_exec($curl);
+		$errno = curl_errno($curl);
+		$error = curl_error($curl);
+		$rcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+		curl_close($curl);
+	}
+
     public function saveSettings($settings = array())
 	{
 		$sm = new waAppSettingsModel();
 		$data = $sm->get('shop.yamodule');
-		// $this->sendSettings($_POST, waRequest::request('mode'));
+		$this->sendStatistics();
 		foreach ($_POST as $k => $v)
 		{
 			if ($k == 'ya_pokupki_carrier' || $k == 'ya_pokupki_rate' || $k == 'ya_market_categories')
