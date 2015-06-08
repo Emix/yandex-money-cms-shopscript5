@@ -44,7 +44,7 @@ class shopYamodulePlugin extends shopPlugin {
 		$data_shop = $sm->get('webasyst');
 
 		$array = array(
-			'url' => $data_shop['url'],
+			'url' => wa()->url(),
 			'cms' => 'shop-script5',
 			'version' => wa()->getVersion('webasyst'),
 			'email' => $data_shop['email'],
