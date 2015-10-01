@@ -36,27 +36,11 @@
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="ya_metrika_login">[`Логин пользователя в системе Яндекс.Метрика`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_metrika_login" type="text" name="ya_metrika_login" class="input" value="{$ya_metrika_login}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
-			<label for="ya_metrika_userpw">[`Пароль пользователя в системе Яндекс.Метрика`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_metrika_userpw" type="text" name="ya_metrika_userpw" class="input" value="{$ya_metrika_userpw}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
 			<label for="ya_metrika_token">[`Токен OAuth`]</label>
 		</div>
 		<div class="value">
 			<input disabled="disabled" id="ya_metrika_token" type="text" name="ya_metrika_token" class="input" value="{$ya_metrika_token}">
-			<br><span data-type="metrika" class="get_token hint">[`Получить токен`]</span>
+			<br><a href='https://oauth.yandex.ru/authorize?response_type=code&display=popup&client_id={$ya_metrika_appid}' target='_blank'>[`Получить токен`]</a>
 		</div>
 	</div>
 	

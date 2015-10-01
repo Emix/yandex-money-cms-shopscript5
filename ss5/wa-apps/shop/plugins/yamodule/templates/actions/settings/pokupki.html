@@ -25,22 +25,6 @@
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="ya_pokupki_login">[`Логин пользователя в системе Яндекс.Маркет`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_pokupki_login" type="text" name="ya_pokupki_login" class="input" value="{$ya_pokupki_login}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
-			<label for="ya_pokupki_userpw">[`Пароль пользователя в системе Яндекс.Маркет`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_pokupki_userpw" type="text" name="ya_pokupki_userpw" class="input" value="{$ya_pokupki_userpw}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
 			<label for="ya_pokupki_appid">[`ID приложения`]</label>
 		</div>
 		<div class="value">
@@ -61,7 +45,7 @@
 		</div>
 		<div class="value">
 			<input disabled="disabled" id="ya_pokupki_token" disabed="disabled" type="text" name="ya_pokupki_token" class="input" value="{$ya_pokupki_token}">
-			<br><span data-type="pokupki" class="get_token hint">[`Получить токен для доступа к программе "Заказы на маркете"`]</span>
+			<br><a href='https://oauth.yandex.ru/authorize?response_type=code&display=popup&client_id={$ya_pokupki_appid}' target='_blank'>[`Получить токен для доступа к программе "Заказы на маркете"`]</a>
 		</div>
 	</div>
 	<div class="field">

@@ -46,29 +46,6 @@ $(document).ready(function(){
 			},
 		});
 	});
-
-	$('.get_token').live('click', function(e){
-		e.preventDefault();
-		var type = $(this).data('type');
-		$form = $(this).parents('form').first();
-		var data = new Object();
-		data.action = 'get_token';
-		data.type = type;
-		$.ajax({
-			type: 'POST',
-			url: $form.attr('action'),
-			data: data,
-			dataType: 'Json',
-			success: function(jsonData){
-				if (jsonData.error){
-					alert(jsonData.error + ' : ' + jsonData.error_description);
-				}else{
-					$('#ya_'+ type + '_token').val(jsonData.token);
-					alert('Токен загружен.');
-				}
-			},
-		});
-	});
 	
 });
 

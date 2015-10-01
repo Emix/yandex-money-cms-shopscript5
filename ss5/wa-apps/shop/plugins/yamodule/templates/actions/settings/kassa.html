@@ -68,6 +68,11 @@
 			<label for="ya_kassa_pb">[`Оплата через Промсвязьбанк.`]</label><br/>
 			<input{if $ya_kassa_ma} checked="checked" {/if} id="ya_kassa_ma" type="checkbox" name="ya_kassa_ma" class="input" value="1">
 			<label for="ya_kassa_ma">[`Оплата через MasterPass.`]</label><br/>
+			
+			<input{if $ya_kassa_qw} checked="checked" {/if} id="ya_kassa_qw" type="checkbox" name="ya_kassa_qw" class="input" value="1">
+			<label for="ya_kassa_qw">[`Оплата через QIWI Wallet.`]</label><br/>
+			<input{if $ya_kassa_qp} checked="checked" {/if} id="ya_kassa_qp" type="checkbox" name="ya_kassa_qp" class="input" value="1">
+			<label for="ya_kassa_qp">[`Оплата через доверительный платеж (Куппи.ру).`]</label><br/>
 		</div>
 	</div>
 	<div class="field">

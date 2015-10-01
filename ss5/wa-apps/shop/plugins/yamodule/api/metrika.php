@@ -8,7 +8,7 @@ Class YaMetrika
 	var $password;
 	var $number;
 	var $token;
-	public $url_api = 'http://api-metrika.yandex.ru/';
+	public $url_api = 'https://api-metrika.yandex.ru/management/v1/';
 	
 	public function initData($token, $number)
 	{
@@ -80,14 +80,12 @@ Class YaMetrika
 
 				if($sm->get('shop.yamodule', 'ya_metrika_cart'))
 					$res['cart'] = $this->addCounterGoal(array('goal' => $data['YA_METRIKA_CART']));
-				else
-					if (isset($goals['YA_METRIKA_CART']->id))
+				elseif (isset($goals['YA_METRIKA_CART']->id))
 						$res['cart'] = $this->deleteCounterGoal($goals['YA_METRIKA_CART']->id);
 					
 				if($sm->get('shop.yamodule', 'ya_metrika_order'))
 					$res['order'] = $this->addCounterGoal(array('goal' => $data['YA_METRIKA_ORDER']));
-				else
-					if (isset($goals['YA_METRIKA_ORDER']->id))
+				elseif (isset($goals['YA_METRIKA_ORDER']->id))
 						$res['order'] = $this->deleteCounterGoal($goals['YA_METRIKA_ORDER']->id);
 				
 				$_SESSION['metrika_status'][] = $this->success_alert('Данные метрики отправлены на сервер!');
@@ -129,19 +127,19 @@ Class YaMetrika
 	{
 		$sm = new waAppSettingsModel();
 		$data = $sm->get('shop.yamodule');
-		$params = array(
+		$params = array('counter'=>array(
 			'goals_remove' => 0,
 			'code_options' => array(
-				'clickmap' => $data['ya_metrika_map'],
-				'external_links' => $data['ya_metrika_out'],
-				'visor' => $data['ya_metrika_ww'],
-				'denial' => $data['ya_metrika_refused'],
-				'track_hash' => $data['ya_metrika_hash'],
+				'clickmap' => (string) $data['ya_metrika_map'],
+				'external_links' => (string) $data['ya_metrika_out'],
+				'visor' => (string) $data['ya_metrika_ww'],
+				'denial' => (string) $data['ya_metrika_refused'],
+				'track_hash' => (string) $data['ya_metrika_hash'],
 				'informer' => array(
 					'enabled' => $data['ya_metrika_informer']
 				)
 			)
-		);
+		));
 
 		if(count($params)){
 			return $this->SendResponse('counter/'.$this->number, array(), $params, 'PUT');
@@ -150,7 +148,7 @@ Class YaMetrika
 	
 	public function SendResponse($to, $headers, $params, $type, $pretty = 1)
 	{
-		$response = $this->post($this->url_api.$to.'.json?pretty='.$pretty.'&oauth_token='.$this->token, $headers, $params, $type);
+		$response = $this->post($this->url_api.$to.'?pretty='.$pretty.'&oauth_token='.$this->token, $headers, $params, $type);
 		$data = json_decode($response->body);
 		if($response->status_code == 200){
 			return $data;

@@ -27,24 +27,24 @@ class shopYamodulePlugin extends shopPlugin {
 				elseif($type == 'p')
 					$sm->set('shop.yamodule' , 'ya_pokupki_token', $data->access_token);
 			}
-
-			die(json_encode(array('token' => $data->access_token)));
+			return $data->access_token;
+			//die(json_encode(array('token' => $data->access_token)));
 		}
 		else
-			die($result);
+			return false;
 	}
 
 	public function sendStatistics()
 	{
+		global $wa;
 		$headers = array();
 		require_once __DIR__.'/../api/YM_cryptor.php';
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
 		$sm = new waAppSettingsModel();
 		$data = $sm->get('shop.yamodule');
 		$data_shop = $sm->get('webasyst');
-
 		$array = array(
-			'url' => wa()->url(),
+			'url' => wa()->getUrl(true),
 			'cms' => 'shop-script5',
 			'version' => wa()->getVersion('webasyst'),
 			'email' => $data_shop['email'],
@@ -87,6 +87,7 @@ class shopYamodulePlugin extends shopPlugin {
 	{
 		$sm = new waAppSettingsModel();
 		$data = $sm->get('shop.yamodule');
+		
 		$this->sendStatistics();
 		foreach ($_POST as $k => $v)
 		{
@@ -106,8 +107,6 @@ class shopYamodulePlugin extends shopPlugin {
 			'ya_metrika_number' => _w('Не заполнен номер счётчика'),
 			'ya_metrika_appid' => _w('Не заполнен id приложения'),
 			'ya_metrika_pwapp' => _w('Не заполнен пароль приложения'),
-			'ya_metrika_login' => _w('Не заполнен логин yandex'),
-			'ya_metrika_userpw' => _w('Не заполнен пароль yandex'),
 			'ya_metrika_token' => _w('Не заполнен токен. Получите его'),
 			'ya_market_name' => _w('Не заполнено имя магазина'),
 			'ya_market_price' => _w('Не заполнена цена'),
@@ -116,8 +115,6 @@ class shopYamodulePlugin extends shopPlugin {
 			'ya_pokupki_appid' => _w('Не заполнен id приложения'),
 			'ya_pokupki_pwapp' => _w('Не заполнен пароль приложения'),
 			'ya_pokupki_campaign' => _w('Не заполнен номер кампании'),
-			'ya_pokupki_login' => _w('Не заполнен логин yandex'),
-			'ya_pokupki_userpw' => _w('Не заполнен пароль yandex'),
 			'ya_pokupki_token' => _w('Не заполнен токен. Получите его'),
 		);
 
@@ -140,22 +137,20 @@ class shopYamodulePlugin extends shopPlugin {
 		{
 			require_once __DIR__.'/../api/metrika.php';
 			$ymetrika = new YaMetrika();
+			if (isset($_GET['code'])){
+				if (isset($_GET['type']) && $_GET['type']=='metrika'){
+					$data['ya_metrika_token']=$this->gocurl('m', 'grant_type=authorization_code&code='.$_GET['code'].'&client_id='.$data['ya_metrika_appid'].'&client_secret='.$data['ya_metrika_pwapp']);
+				}else{
+					$this->gocurl('p', 'grant_type=authorization_code&code='.$_GET['code'].'&client_id='.$data['ya_pokupki_appid'].'&client_secret='.$data['ya_pokupki_pwapp']);
+				}
+				wa()->getResponse()->redirect(wa()->getRootUrl(true).'admin/shop/?action=plugins#/yamodule/');
+				exit;
+			}
 			$ymetrika->initData($data['ya_metrika_token'], $data['ya_metrika_number']);
 			$ymetrika->client_id = $data['ya_metrika_appid'];
 			$ymetrika->client_secret = $data['ya_metrika_pwapp'];
-			$ymetrika->username = $data['ya_metrika_login'];
-			$ymetrika->password = $data['ya_metrika_userpw'];
 			$ymetrika->processCounter();
 			$this->errors['metrika'] = array_merge($this->errors['metrika'], $_SESSION['metrika_status']);
-		}
-
-		if (waRequest::post('action') == 'get_token')
-		{
-			$type = waRequest::post('type');
-			if ($type == 'metrika')
-				return $this->gocurl('m', 'grant_type=password&username='.$data['ya_metrika_login'].'&password='.$data['ya_metrika_userpw'].'&client_id='.$data['ya_metrika_appid'].'&client_secret='.$data['ya_metrika_pwapp']);
-			if ($type == 'pokupki')
-				return $this->gocurl('p', 'grant_type=password&username='.$data['ya_pokupki_login'].'&password='.$data['ya_pokupki_userpw'].'&client_id='.$data['ya_pokupki_appid'].'&client_secret='.$data['ya_pokupki_pwapp']);
 		}
 
 		foreach ($arr as $a)

@@ -106,6 +106,8 @@ class yamodulepayPayment extends waPayment implements waIPayment
 			$view->assign('wallet', $data['ya_kassa_wallet']);
 			$view->assign('pb', $data['ya_kassa_pb']);
 			$view->assign('ma', $data['ya_kassa_ma']);
+			$view->assign('qw', $data['ya_kassa_qw']);
+			$view->assign('qp', $data['ya_kassa_qp']);
 			$view->assign('hidden_fields', $hidden_fields);
 		}
 
