@@ -1,0 +1,147 @@
+<link rel="stylesheet" type="text/css" href="{$wa_app_static_url}plugins/yamodule/css/tabs.css">
+<div class="tabs_ya bootstrap tabs_ya_order">
+	<div id="adv-page-loader" class="on" style="display: none;"><span class="opc-spinner"></span></div>
+	<input id="return" type="radio" name="tabs" checked>
+	<label for="return" title="[`Возврат`]">[`Возврат`]</label>
+
+	<input id="list_return" type="radio" name="tabs">
+	<label for="list_return" title="[`Список возвратов`]">[`История`]</label>
+
+	<section id="return">
+		<p style="display:none;" class="alert alert-success success_return_{$id_order}">[`Платеж успешно возвращен`]</p>
+		<div id="rerrors">
+		{if isset($return_errors)}
+			{foreach $return_errors as $ke}
+				<p class='alert alert-danger'>{$ke}</p>
+			{/foreach}
+		{/if}
+		</div>
+{if !isset($return_errors) || !$return_errors|count}
+	<form class="form-horizontal" method='post' action="">
+		<table class="table table-bordered">
+		{if $pym}
+		<tr>
+			<td>[`Номер транзакции (Яндекс.Касса)`]</td>
+			<td>{$invoiceId}</td>
+		</tr>
+		<tr>
+			<td>[`Номер заказа`]</td>
+			<td>{$id_order}</td>
+		</tr>
+		<tr>
+			<td>[`Способ оплаты`]</td>
+			<td>Яндекс.Касса ({$payment_method})</td>
+		</tr>
+		<tr>
+			<td>[`Сумма платежа`]</td>
+			<td>{shop_currency_html($total)}</td>
+		</tr>
+		<tr>
+			<td>[`Возвращено`]</td>
+			<td>{shop_currency_html($return_total)}</td>
+		</tr>
+		<tr>
+			<td>[`Сумма возврата`]</td>
+			<td style="width: 350px;">
+				<div class="input-group">
+					<span class="input-group-addon"> руб </span>
+					<input type="text" name="return_sum" class='control-form' value="{$total - $return_total}" id="return_sum" />
+				</div>
+			</td>
+		</tr>
+		  <tr>
+			 <td>[`Причина возврата`]</td>
+			 <td><textarea class='control-form' name='return_cause'></textarea></td>
+		  </tr>
+		  <tr>
+			 <td colspan='2'><button type='button' class='submit_return_button btn btn-success'>[`Сделать возврат`]</button></td>
+		  </tr>
+		{else}
+			<tr>
+				<td colspan='3'><div class='alert alert-danger'>[`Информация по платежу отсутствует. Причиной может быть ошибочный сертификат по работе с MWS или настройки модуля Яндекс.Касса`]</div></td>
+			</tr>
+		{/if}
+		</table>
+		</form>
+	{/if}
+	</section>
+	<section id="list_return">
+		<h4>[`Список возвратов`]</h4>
+		  <form class="form-horizontal">
+			<div class="form-group">
+			  <div class="col-lg-12">
+					<table class='table table-bordered'>
+					<tr>
+						<td>[`Дата возврата`]</td>
+						<td>[`Сумма возврата`]</td>
+						<td>[`Причина возврата`]</td>
+					</tr>
+					{if $return_items}
+						{foreach $return_items as $ret}
+						 <tr>
+							 <td>{$ret['date']}</td>
+							 <td>{shop_currency_html($ret['amount'])}</td>
+							 <td>{$ret['cause']}</td>
+						 </tr>
+						{/foreach}
+					{else}
+						 <tr>
+							 <td colspan='3'><div class='alert alert-danger'>[`Успешные возвраты по данному платежу отсутствуют`]</div></td>
+						 </tr>
+					{/if}
+					</table>
+			  </div>
+			</div>
+		  </form>
+	</section>
+</div>
+<script type="text/javascript">
+function strpos( haystack, needle, offset){
+    var i = haystack.indexOf( needle, offset );
+    return i >= 0 ? i : false;
+}
+
+$(document).ready(function(){
+	var step = new Array();
+	var total = 0;
+
+	if (strpos(location.href, 'success_return'))
+	{
+		$('#return').click();
+		$('.success_return_{$id_order}').show();
+	}
+
+	$('.submit_return_button').on('click', function(ee) {
+		ee.preventDefault();
+		$.ajax({
+			url: '?module=plugins&id=yamodule&action=save&mode=make_return',
+			type: 'post',
+			dataType: 'json',
+			data: $('.submit_return_button').parents('form').first().serialize()+'&id_order={$id_order}',
+			cache: false,
+			contentType: false,
+			processData: false,
+			beforeSend: function() {
+				//$('#mws_crt_load').button('loading');
+				$('#rerrors').empty();
+			},
+			complete: function() {
+				//$('#mws_crt_load').button('reset');
+			},
+			success: function(json) {
+				if (json.data.errors == 0){	
+					location.href = location.href+'success_return/';
+					location.reload();
+				} else {
+					for (i in json.data.errors) {
+						$('#rerrors').append("<div class='alert alert-danger'>"+ json.data.errors[i] +"</div>");
+					}
+				}
+			},
+			error: function(xhr, ajaxOptions, thrownError) {
+				alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+			}
+		});
+	});
+})
+</script>

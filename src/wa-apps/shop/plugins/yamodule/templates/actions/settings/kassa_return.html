@@ -1,0 +1,118 @@
+<div class="errors">{$mws_status|escape:'quotes':'UTF-8'}</div>
+<p style="margin-bottom: 5px;">[`Любое использование вами модуля Y.CMS означает полное и безоговорочное принятие вами условий <a target="_blank" href="https://money.yandex.ru/doc.xml?id=527052">лицензионного договора</a>. Если вы не принимаете условия указанного договора в полном объеме, то не имеете права использовать программу в каких-либо целях.`]</p>
+<p></p>
+<h4>Настройка взаимодействия по протоколу MWS (<a target="_blank" href="https://tech.yandex.ru/money/doc/payment-solution/payment-management/payment-management-about-docpage/">Merchant Web Services</a>)</h4>
+{if $mws_cert == 0}
+	{if !$ya_kassa_active || !$ya_kassa_shopid}
+		{if !$ya_kassa_active}
+			<div class="alert alert-danger">[`Отключен модуль Яндекс.Кассы`]</div>
+		{/if}
+		{if !$ya_kassa_shopid}
+			<div class="alert alert-danger">[`Отсутствует идентификатор магазина (shopId)`]</div>
+		{/if}
+	{else}
+		<p>[`Для работы с MWS необходимо получить в Яндекс.Деньгах специальный сертификат и загрузить его в приложении.`]<p>
+		<form id="mws_form" class="market_form form-horizontal" method="post" action="">
+			<div class="form-group field">
+				<p class="name col-sm-3 control-label">[`Сертификат`]</p>
+				<button style="    margin-left: 30px;" id="mws_crt_load" type="button" class="value btn btn-default">[`Загрузить`]</button>
+				<div class="col-sm-6" id='mws_cert_status'>
+				</div>
+			</div>
+			<div class="form-group without-cert field">
+				<label class="name col-sm-3 control-label" style="width: 165px;" for="mws_rule">[`Как получить сертификат`]</label>
+				<div class="col-sm-9 value">
+					<ol>
+						<li>[`Скачайте`] <a href="?module=plugins&id=yamodule&action=save&mode=output_csr">[`готовый запрос на сертификат`]</a> [`(файл в формате .csr).`]</li>
+						<li>[`Скачайте`] <a target="_blank"  href="https://money.yandex.ru/i/html-letters/SSL_Cert_Form.doc">[`заявку на сертификат`]</a>. [`Ее нужно заполнить, распечатать, поставить подпись и печать. Внизу страницы — таблица с данными для заявки, просто скопируйте их. Отправьте файл запроса вместе со сканом готовой заявки менеджеру Яндекс.Денег на merchants@yamoney.ru.`]</li>
+						<li>[`Загрузите сертификат, который пришлет вам менеджер, наверху этой страницы.`]</li>
+					</ol>
+				</div>
+			</div>
+
+			<div class="form-group without-cert field">
+				<div class="col-sm-9 name">
+					<p>[`Данные для заполнения заявки`]</p>
+				</div>
+				<div class="col-sm-9 value">
+					<p style="width: 600px;">[`Скопируйте эти данные в таблицу. Остальные строчки заполните самостоятельно.`]</p>
+					<table style="width: 600px;" class="table table-bordered">
+						 <tr>
+						<td>CN</td>
+						<td>{$mws_cn}</td>
+						 </tr>
+						 <tr>
+						<td>[`Электронная подпись на сертификат`]</td>
+						<td><textarea cols="80" disabled rows="13">{$mws_sign}</textarea></td>
+						 </tr>
+						 <tr>
+						<td>[`Причина запроса`]</td>
+						<td>[`Первоначальный`]</td>
+						 </tr>
+					</table>
+				</div>
+			</div>								
+		</form>
+	{/if}
+{else}
+	<div class='alert alert-success'>[`Модуль настроен для работы с платежами и возвратами. Сертификат загружен.`]</div>
+	<p>[`Просмотреть информацию о платеже или сделать возврат можно в `]<a href="?action=orders#/orders/">[`Списке заказов`]</a></p>
+	<p><a class="reset_csr">[`Сбросить настройки`]</a></p>
+{/if}
+
+<script type="text/javascript"><!--
+var step = new Array();
+var total = 0;
+$('.reset_csr').bind('click', function(ee) {
+	ee.preventDefault();
+	if (confirm('Все настройки для работы с MWS будут стерты. Сертификат нужно будет запросить повторно. Вы действительно хотите сбросить настройки MWS?')) {
+		$.ajax({
+			url: '?module=plugins&id=yamodule&action=save&mode=generate_cert',
+			cache: false,
+			success: function(json) {
+				location.reload();
+			}
+		});
+	}
+});
+$('#mws_crt_load').on('click', function(ee) {
+	ee.preventDefault();
+	$('#form-upload').remove();
+	$('body').prepend('<form enctype="multipart/form-data" id="form-upload" style="display: none;"><input type="file" name="file" /></form>');
+	$('#form-upload input[name=\'file\']').trigger('click');
+	if (typeof timer != 'undefined') {
+    	clearInterval(timer);
+	}
+	timer = setInterval(function() {
+		if ($('#form-upload input[name=\'file\']').val() != '') {
+			clearInterval(timer);
+			$('.alert').remove();
+			$.ajax({
+				url: '?module=plugins&id=yamodule&action=save&mode=cert_upload',
+				type: 'post',
+				dataType: 'json',
+				data: new FormData($('#form-upload')[0]),
+				cache: false,
+				contentType: false,
+				processData: false,
+				beforeSend: function() {
+					//$('#mws_crt_load').button('loading');
+				},
+				complete: function() {
+					//$('#mws_crt_load').button('reset');
+				},
+				success: function(json) {
+					if (!json.data.error){	
+						location.reload();
+					} else {
+						$('#mws_form').prepend("<div class='alert alert-danger'>"+ json.data.error +"</div>");
+					}
+				},
+				error: function(xhr, ajaxOptions, thrownError) {
+					alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+				}
+			});
+		}
+	}, 500);
+});
+</script>
