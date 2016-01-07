@@ -14,6 +14,7 @@ class shopYamodulePlugin extends shopPlugin {
 			'url' => wa()->getUrl(true),
 			'cms' => 'shop-script5',
 			'version' => wa()->getVersion('webasyst'),
+			'ver_mod' => $this->info['version'],
 			'email' => $data_shop['email'],
 			'shopid' => $data['ya_kassa_shopid'],
 			'settings' => array(
@@ -44,7 +45,14 @@ class shopYamodulePlugin extends shopPlugin {
 		$errno = curl_errno($curl);
 		$error = curl_error($curl);
 		$rcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-		curl_close($curl);
+      curl_close($curl);
+		  
+		$json=json_decode($rbody);
+		if ($rcode==200 && isset($json->new_version)){
+			return $json->new_version;
+		}else{
+			return false;
+		}
 	}
 
     public function saveSettings($settings = array())
@@ -130,7 +138,6 @@ class shopYamodulePlugin extends shopPlugin {
 			return array('mws_return' => isset($mws_return) ? $mws_return : '', 'errors' => $errors);
 		}
 
-		$this->sendStatistics();
 		foreach ($_POST as $k => $v)
 		{
 			if ($k == 'ya_pokupki_carrier' || $k == 'ya_pokupki_rate' || $k == 'ya_market_categories')
@@ -159,8 +166,10 @@ class shopYamodulePlugin extends shopPlugin {
 			'ya_pokupki_campaign' => _w('Не заполнен номер кампании'),
 			'ya_pokupki_token' => _w('Не заполнен токен. Получите его'),
 		);
-
 		$this->errors = array();
+		$update_status = $this->sendStatistics();
+		if ($update_status != false) $this->errors['update'][] = '<div class="alert alert-danger">У вас неактуальная версия модуля. Вы можете <a target="_blank" href="https://github.com/yandex-money/yandex-money-cms-shopscript5/releases">загрузить и установить</a> новую ('.$update_status.')</div>';
+		
 		$this->errors['metrika'] = array();
 		$data = $sm->get('shop.yamodule');
 		$keys = array_keys($array_fields);
