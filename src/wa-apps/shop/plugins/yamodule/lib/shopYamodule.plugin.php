@@ -57,8 +57,8 @@ class shopYamodulePlugin extends shopPlugin {
 
     public function saveSettings($settings = array())
 	{
-		require_once __DIR__.'/../api/mws.php';
-		require_once __DIR__.'/../api/metrika.php';
+		require_once dirname(__FILE__).'/../api/mws.php';
+		require_once dirname(__FILE__).'/../api/metrika.php';
 
 		if (waRequest::request('mode') == 'cert_upload')
 		{
@@ -249,7 +249,7 @@ class shopYamodulePlugin extends shopPlugin {
     }
 
     public function yaOrderShip($data) {
-		require_once __DIR__.'/../api/pokupki.php';
+		require_once dirname(__FILE__).'/../api/pokupki.php';
 		$dbm = new waModel();
 		$order = $dbm->query("SELECT * FROM `shop_pokupki_orders` WHERE id_order = ".(int)$data['order_id'])->fetchRow();
 		$order_id = isset($order[1]) ? $order[1] : 0;
@@ -266,7 +266,7 @@ class shopYamodulePlugin extends shopPlugin {
 	}
 
     public function yaOrderDel($data) {
-		require_once __DIR__.'/../api/pokupki.php';
+		require_once dirname(__FILE__).'/../api/pokupki.php';
 		$dbm = new waModel();
 		$order = $dbm->query("SELECT * FROM `shop_pokupki_orders` WHERE id_order = ".(int)$data['order_id'])->fetchRow();
 		$order_id = isset($order[1]) ? $order[1] : 0;
@@ -279,7 +279,7 @@ class shopYamodulePlugin extends shopPlugin {
 	}
 
     public function yaOrderProcess($data) {
-		require_once __DIR__.'/../api/pokupki.php';
+		require_once dirname(__FILE__).'/../api/pokupki.php';
 		$dbm = new waModel();
 		$order = $dbm->query("SELECT * FROM `shop_pokupki_orders` WHERE id_order = ".(int)$data['order_id'])->fetchRow();
 		$order_id = isset($order[1]) ? $order[1] : 0;
@@ -300,7 +300,7 @@ class shopYamodulePlugin extends shopPlugin {
 	}
 
     public function kassaOrderReturn() {
-		require_once __DIR__.'/../api/mws.php';
+		require_once dirname(__FILE__).'/../api/mws.php';
 		$view = wa()->getView();
 		$ri = $errors = $order = array();
 		$id_order = isset($_GET['id']) ? (int)$_GET['id'] : 0;

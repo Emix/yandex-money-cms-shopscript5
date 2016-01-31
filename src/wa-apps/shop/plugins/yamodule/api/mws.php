@@ -22,7 +22,12 @@ Class Mws
 		$order_query = $model->query("SELECT * FROM `shop_mws_return` o WHERE o.invoice_id = '".$inv."' ORDER BY `date` DESC")->fetchAll();
 		$sum = 0;
 		if (count($order_query)) {
-			$returns = array_filter($order_query, function($row) { return ($row['status'] == '0');});
+			$returns = array();
+			foreach ($order_query as $oq) {
+			    if ($oq['status'] == 0) {
+			     $returns[] = $oq;
+			    }
+			}
 			if ($returns)
 				foreach ($returns as $k => $item)
 					$sum += $item['amount'];
