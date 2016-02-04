@@ -91,12 +91,13 @@ Class Mws
 		$csr="";
 		$sm = new waAppSettingsModel();
 		$data = $sm->get('shop.yamodule');
+		$sid = isset($data['ya_kassa_shopid']) ? $data['ya_kassa_shopid'] : '';
 		$sign = self::genCsrPKey(
 		array(
 			"countryName" => "RU",
 			"stateOrProvinceName" => "Russia",
 			"localityName" => "Moscow",
-			"commonName" => "/business/oc2/yacms-".isset($data['ya_kassa_shopid']) ? $data['ya_kassa_shopid'] : '',
+			"commonName" => "/business/webasyst/yacms-".$sid,
 		),	$pkey, $csr);
 
 		$sm->set('shop.yamodule' , 'yamodule_mws_pkey', $pkey);
