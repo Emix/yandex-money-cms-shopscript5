@@ -97,7 +97,8 @@ class yamodulepayPayment extends waPayment implements waIPayment
 				'orderNumber' => $this->app_id.'/'.$this->merchant_id.'/'.$order_data['order_id'],
 				'Sum' => number_format($order_data['amount'], 2, '.', ''),
 				'cps_email' => isset($email[0]) ? $email[0] : '',
-				'cps_phone' => isset($phone[0]) ? $phone[0] : ''
+				'cps_phone' => isset($phone[0]) ? $phone[0] : '',
+				'cms_name' => 'ya_webasyst'
 			);
 
 			if ($data['ya_kassa_test'])
