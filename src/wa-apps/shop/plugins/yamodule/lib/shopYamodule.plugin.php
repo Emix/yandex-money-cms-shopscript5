@@ -95,7 +95,10 @@ class shopYamodulePlugin extends shopPlugin {
 				$mws->PkeyPem = isset($data['yamodule_mws_pkey']) ? $data['yamodule_mws_pkey'] : '';
 				$mws->CertPem = isset($data['yamodule_mws_cert']) ? $data['yamodule_mws_cert'] : '';
 
-				$mws_payment = $mws->request('listOrders', array('orderNumber' => implode('/', array('shop', $order['contact_id'], $order['id']))), false, false);
+				$model = new shopPluginModel();
+				$loaded_plugin = $model->getByField('plugin', 'yamodulepay');
+				$mws_payment = $mws->request('listOrders', array('orderNumber' => implode('/', array('shop', $loaded_plugin['id'], $order['id']))), false, false);
+
 				if (!isset($mws_payment['invoiceId']) || !$mws_payment['invoiceId'])
 					$errors[] = 'Проблема с сертификатом, отсутствием оплаты по данному заказу или указан ошибочный идентификатор магазина';
 
@@ -318,7 +321,10 @@ class shopYamodulePlugin extends shopPlugin {
 			$mws->PkeyPem = isset($data['yamodule_mws_pkey']) ? $data['yamodule_mws_pkey'] : '';
 			$mws->CertPem = isset($data['yamodule_mws_cert']) ? $data['yamodule_mws_cert'] : '';
 
-			$mws_payment = $mws->request('listOrders', array('orderNumber' => implode('/', array('shop', $order['contact_id'], $order['id']))), false, false);
+			$model = new shopPluginModel();
+			$loaded_plugin = $model->getByField('plugin', 'yamodulepay');
+			$mws_payment = $mws->request('listOrders', array('orderNumber' => implode('/', array('shop', $loaded_plugin['id'], $order['id']))), false, false);
+
 			if (!isset($mws_payment['invoiceId']) || !$mws_payment['invoiceId'])
 				$errors[] = _w('Проблема с сертификатом, отсутствием оплаты по данному заказу или указан ошибочный идентификатор магазина');
 
