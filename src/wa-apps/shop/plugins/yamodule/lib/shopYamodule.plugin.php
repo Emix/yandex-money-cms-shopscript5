@@ -323,7 +323,7 @@ class shopYamodulePlugin extends shopPlugin {
 
 			$model = new shopPluginModel();
 			$loaded_plugin = $model->getByField('plugin', 'yamodulepay');
-			$mws_payment = $mws->request('listOrders', array('orderNumber' => implode('/', array('shop', $loaded_plugin['id'], $order['id']))), false, false);
+			$mws_payment = ($mws->CertPem!='')?$mws->request('listOrders', array('orderNumber' => implode('/', array('shop', $loaded_plugin['id'], $order['id']))), false, false):array();
 
 			if (!isset($mws_payment['invoiceId']) || !$mws_payment['invoiceId'])
 				$errors[] = _w('Проблема с сертификатом, отсутствием оплаты по данному заказу или указан ошибочный идентификатор магазина');
