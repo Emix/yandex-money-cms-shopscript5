@@ -1,3 +1,9 @@
+span.help-block {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    color: #959595;
+}
 /*стили фиксированного меню*/
 .top-nav {
     background: #555555;

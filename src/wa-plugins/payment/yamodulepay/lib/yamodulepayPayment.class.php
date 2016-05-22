@@ -89,7 +89,6 @@ class yamodulepayPayment extends waPayment implements waIPayment
 			$customer_contact = new waContact($order_data['customer_contact_id']);
 			$phone = $customer_contact->get('phone');
 			$email = $customer_contact->get('email');
-
 			$hidden_fields = array(
 				'scid' => $data['ya_kassa_scid'],
 				'shopid' => $data['ya_kassa_shopid'],
@@ -98,6 +97,8 @@ class yamodulepayPayment extends waPayment implements waIPayment
 				'Sum' => number_format($order_data['amount'], 2, '.', ''),
 				'cps_email' => isset($email[0]) ? $email[0]['value'] : '',
 				'cps_phone' => isset($phone[0]) ? $phone[0]['value'] : '',
+				'shopSuccessUrl' => wa()->getRootUrl(true).'payments.php/yamodulepay/?result=success',
+				'shopFailUrl' => wa()->getRootUrl(true).'payments.php/yamodulepay/?result=fail',
 				'cms_name' => 'ya_webasyst'
 			);
 

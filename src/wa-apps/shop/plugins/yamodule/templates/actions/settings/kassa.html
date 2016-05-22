@@ -1,48 +1,82 @@
 <form action="?module=plugins&id=yamodule&action=save&mode=kassa" method="post" id="plugins-settings-form">
 	<div class="field">
 		<div class="name">
-			<label for="">[`Активность`]</label>
+
 		</div>
 		<div class="value">
-			<input {if $ya_kassa_active} checked="checked" {/if} id="ya_kassa_active" type="radio" name="ya_kassa_active" class="input" value="1">
-			<label for="ya_kassa_active">[`Включено`]</label><br/>
-			<input {if !$ya_kassa_active} checked="checked" {/if} id="ya_kassa_active" type="radio" name="ya_kassa_active" class="input" value="0">
-			<label for="ya_kassa_active">[`Выключено`]</label><br/>
+			Для работы с модулем нужно подключить магазин к <a target="_blank" href="https://kassa.yandex.ru/">Яндекс.Кассе</a>.
 		</div>
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="">[`Режим работы`]</label>
+			<label for=""></label>
+		</div>
+		<div class="value">
+			<input {if $ya_kassa_active} checked="checked" {/if} id="ya_kassa_active" type="checkbox" name="ya_kassa_active" class="input" value="1">
+			<label for="ya_kassa_active">[`Включить приём платежей через Яндекс.Кассу`]</label><br/>
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for=""></label>
 		</div>
 		<div class="value">
 			<input {if $ya_kassa_test} checked="checked" {/if} id="ya_kassa_test" type="radio" name="ya_kassa_test" class="input" value="1">
-			<label for="ya_kassa_test">[`Тест`]</label><br/>
+			<label for="ya_kassa_test">[`Тестовый режим`]</label><br/>
 			<input {if !$ya_kassa_test} checked="checked" {/if} id="ya_kassa_test" type="radio" name="ya_kassa_test" class="input" value="0">
-			<label for="ya_kassa_test">[`Рабочий`]</label><br/>
+			<label for="ya_kassa_test">[`Рабочий режим`]</label><br/>
 		</div>
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="ya_kassa_shopid">[`Идентификатор магазина (shopId)`]</label>
+			<label for="ya_kassa_check">[`checkUrl/avisoUrl`]</label>
+		</div>
+		<div class="value">
+			<input id="ya_kassa_check" disabled="disabled" type="text" name="ya_kassa_check" class="input" value="{$ya_kassa_check}">
+			<br><span class="help-block">[`Скопируйте эту ссылку в поля Check URL и Aviso URL в настройках личного кабинета Яндекс.Кассы`]</span>
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="ya_kassa_success">[`successUrl/failUrl`]</label>
+		</div>
+		<div class="value">
+			<input id="ya_kassa_success" disabled="disabled" type="text" name="ya_kassa_success" class="input" value="[`Страницы с динамическими адресами`]">
+			<br><span class="help-block">[`Включите «Использовать страницы успеха и ошибки с динамическими адресами» в настройках личного кабинета Яндекс.Кассы`]</span>
+		</div>
+	</div>
+	<div class="field">
+		<div class="name">
+			<label for="ya_kassa_shopid">[`shop ID`]</label>
 		</div>
 		<div class="value">
 			<input id="ya_kassa_shopid" type="text" name="ya_kassa_shopid" class="input" value="{$ya_kassa_shopid}">
+			<br><span class="help-block">[`Идентификатор магазина`]</span>
 		</div>
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="ya_kassa_scid">[`Номер витрины (scid)`]</label>
+			<label for="ya_kassa_scid">[`scid`]</label>
 		</div>
 		<div class="value">
 			<input id="ya_kassa_scid" type="text" name="ya_kassa_scid" class="input" value="{$ya_kassa_scid}">
+			<br><span class="help-block">[`Номер витрины магазина`]</span>
 		</div>
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="ya_kassa_pw">[`Пароль магазина (shopPassword)`]</label>
+			<label for="ya_kassa_pw">[`shopPassword`]</label>
 		</div>
 		<div class="value">
 			<input id="ya_kassa_pw" type="text" name="ya_kassa_pw" class="input" value="{$ya_kassa_pw}">
+			<br><span class="help-block">[`Секретное слово`]</span>
+		</div>
+		<div class="field ">
+			<div class="name">
+			</div>
+			<div class="value">
+				<span>[`Shop ID, scid, ShopPassword можно посмотреть в <a href='https://money.yandex.ru/joinups' target='_blank'>личном кабинете</a> после подключения Яндекс.Кассы`]</span>
+			</div>
 		</div>
 	</div>
 	<div class="field">
@@ -50,22 +84,22 @@
 			<label for="">[`Сценарий оплаты`]</label>
 		</div>
 		<div class="value">
-			<input {if $ya_kassa_inside} checked="checked" {/if} id="ya_kassa_inside" type="radio" name="ya_kassa_inside" class="input" value="1">
-			<label for="ya_kassa_inside">[`Выбор способов оплаты на стороне магазина`]</label><br/>
 			<input {if !$ya_kassa_inside} checked="checked" {/if} id="ya_kassa_inside" type="radio" name="ya_kassa_inside" class="input" value="0">
 			<label for="ya_kassa_inside">[`Выбор способов оплаты на стороне сервиса Яндекс.Касса`]</label><br/>
+			<input {if $ya_kassa_inside} checked="checked" {/if} id="ya_kassa_inside" type="radio" name="ya_kassa_inside" class="input" value="1">
+			<label for="ya_kassa_inside">[`Выбор способов оплаты на стороне магазина`]</label><br/>
 		</div>
 	</div>
-	<div class="field text_inside">
+	<div class="field">
 		<div class="name">
 		</div>
 		<div class="value">
-			[`<b>Внимание! Этот режим должен быть включен и на стороне сервиса Яндекс.Касса.</b><br>Чтобы активировать этот сценарий, напишите менеджеру Кассы на <a href="mailto:merchants@yamoney.ru">merchants@yamoney.ru</a> или позвоните по телефону 8 800 250-66-99.`]
+			<a href='https://tech.yandex.ru/money/doc/payment-solution/payment-form/payment-form-docpage/' target='_blank'>[`Подробнее о сценариях оплаты`]</a>
 		</div>
 	</div>
 	<div class="field kassa_methods">
 		<div class="name">
-			<label for="">[`Активные методы оплаты`]</label>
+			<label for=""></label>
 		</div>
 		<div class="value">
 			<input{if $ya_kassa_wallet} checked="checked" {/if} id="ya_kassa_wallet" type="checkbox" name="ya_kassa_wallet" class="input" value="1">
@@ -86,7 +120,6 @@
 			<label for="ya_kassa_pb">[`Оплата через Промсвязьбанк.`]</label><br/>
 			<input{if $ya_kassa_ma} checked="checked" {/if} id="ya_kassa_ma" type="checkbox" name="ya_kassa_ma" class="input" value="1">
 			<label for="ya_kassa_ma">[`Оплата через MasterPass.`]</label><br/>
-			
 			<input{if $ya_kassa_qw} checked="checked" {/if} id="ya_kassa_qw" type="checkbox" name="ya_kassa_qw" class="input" value="1">
 			<label for="ya_kassa_qw">[`Оплата через QIWI Wallet.`]</label><br/>
 			<input{if $ya_kassa_qp} checked="checked" {/if} id="ya_kassa_qp" type="checkbox" name="ya_kassa_qp" class="input" value="1">
@@ -95,43 +128,11 @@
 	</div>
 	<div class="field">
 		<div class="name">
-			<label for="">[`Логирование`]</label>
+			<label for="">[`Запись отладочной информации`]</label>
 		</div>
 		<div class="value">
 			<input {if $ya_kassa_log} checked="checked" {/if} id="ya_kassa_log" type="checkbox" name="ya_kassa_log" class="input" value="1">
-		</div>
-	</div>
-	
-	<div class="field">
-		<div class="name">
-			<label for="ya_kassa_check">[`checkUrl`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_kassa_check" disabled="disabled" type="text" name="ya_kassa_check" class="input" value="{$ya_kassa_check}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
-			<label for="ya_kassa_aviso">[`AvisoUrl`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_kassa_aviso" disabled="disabled" type="text" name="ya_kassa_aviso" class="input" value="{$ya_kassa_aviso}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
-			<label for="ya_kassa_fail">[`failUrl`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_kassa_fail" disabled="disabled" type="text" name="ya_kassa_fail" class="input" value="{$ya_kassa_fail}">
-		</div>
-	</div>
-	<div class="field">
-		<div class="name">
-			<label for="ya_kassa_success">[`successUrl`]</label>
-		</div>
-		<div class="value">
-			<input id="ya_kassa_success" disabled="disabled" type="text" name="ya_kassa_success" class="input" value="{$ya_kassa_success}">
+			<br><span class="help-block">[`Настройку нужно будет поменять, только если попросят специалисты Яндекс.Денег`]</span>
 		</div>
 	</div>
 	<div class="field">
