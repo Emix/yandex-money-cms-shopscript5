@@ -106,6 +106,7 @@ class yamodulepayPayment extends waPayment implements waIPayment
 				$yclass->test = true;
 			$view->assign('form_url_kassa', $yclass->getEndpointUrl());
 			$view->assign('inside', $data['ya_kassa_inside']);
+			$view->assign('paylogo', $data['ya_kassa_paylogo']);
 			$view->assign('alfa', $data['ya_kassa_alfa']);
 			$view->assign('wm', $data['ya_kassa_wm']);
 			$view->assign('sber', $data['ya_kassa_sber']);

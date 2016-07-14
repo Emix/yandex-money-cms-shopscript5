@@ -97,6 +97,15 @@
 			<a href='https://tech.yandex.ru/money/doc/payment-solution/payment-form/payment-form-docpage/' target='_blank'>[`Подробнее о сценариях оплаты`]</a>
 		</div>
 	</div>
+	<div class="field text_inside">
+		<div class="name">
+			<label for=""></label>
+		</div>
+		<div class="value">
+			<input {if $ya_kassa_paylogo} checked="checked" {/if} id="ya_kassa_paylogo" type="checkbox" name="ya_kassa_paylogo" class="input" value="1">
+			<label for="ya_kassa_paylogo">[`Использовать кнопку "Оплатить через Яндекс"`]</label><br/>
+		</div>
+	</div>
 	<div class="field kassa_methods">
 		<div class="name">
 			<label for=""></label>

@@ -39,6 +39,7 @@ $data_db = array(
 	'ya_kassa_max' => '5000',
 	'ya_kassa_active' => '0',
 	'ya_kassa_inside' => '1',
+	'ya_kassa_paylogo' => '1',
 	'ya_kassa_log' => '1',
 	'ya_kassa_qp' => '1',
 	'ya_kassa_qw' => '1',
