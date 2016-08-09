@@ -7,4 +7,5 @@ return array(
 		'description'  => 'Максимальная сумма оплаты при которой отображается модуль.',
 		'control_type' => 'input',
 		'class'        => 'js-maxsum-kassa',
-	));
+	)
+);
