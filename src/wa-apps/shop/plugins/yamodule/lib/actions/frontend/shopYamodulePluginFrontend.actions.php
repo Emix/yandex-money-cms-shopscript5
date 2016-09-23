@@ -594,6 +594,7 @@ class shopYamodulePluginFrontendActions extends waActions
 							$param = $this->get_param($product['id'], $sku['id'], $settings['ya_market_vendor'], $settings['ya_market_fea']);
 							$sku_data['param'] = $param['param'];
 							$sku_data['vendor'] = $param['vendor'];
+							$sku_data['group_id'] = $product['id'];
 
 							$market->add_offer($sku_data['id'], $sku_data, $available_sku);
 						}

@@ -107,7 +107,9 @@ Class Yamarket
 
 	function add_offer($id, $data, $available = true)
 	{
-		$allowed = array('url', 'price', 'currencyId', 'categoryId', 'picture', 'store', 'pickup', 'delivery', 'name', 'vendor', 'vendorCode', 'model', 'description', 'sales_notes', 'downloadable', 'weight', 'dimensions', 'param', 'sales_notes', 'country_of_origin');
+		$allowed = array('url', 'price', 'currencyId', 'categoryId', 'picture', 'store', 'pickup', 'delivery',
+            'name', 'vendor', 'vendorCode', 'model', 'group_id', 'description', 'sales_notes', 'downloadable', 'weight',
+            'dimensions', 'param', 'sales_notes', 'country_of_origin');
 		$param = array();
 		$data['model'] = $data['id'].'_tovar';
 		// $data['vendor'] = '-';
@@ -123,7 +125,7 @@ Class Yamarket
 		$data = array();
 		foreach($allowed as $key)
 			if (isset($tmp[$key]) && !empty($tmp[$key]))
-				$data[$key] = $tmp[$key]; # Порядок важен для Я.Маркета!!!
+				$data[$key] = $tmp[$key]; # пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ.пїЅпїЅпїЅпїЅпїЅпїЅпїЅ!!!
 		
 		$out = array('id' => $id, 'data' => $data, 'available' => ($available) ? 'true' : 'false');
 		if(!$this->simple)

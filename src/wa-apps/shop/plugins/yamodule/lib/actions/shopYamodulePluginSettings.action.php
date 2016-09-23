@@ -74,8 +74,8 @@ class shopYamodulePluginSettingsAction extends waViewAction {
         $this->view->assign('ya_p2p_callback', $this->getRelayUrl(true));
         $this->view->assign('ya_pokupki_callback', wa()->getRootUrl(true).'webasyst/shop/?action=plugins#/yamodule/');
         $this->view->assign('ya_metrika_callback', wa()->getRootUrl(true).'webasyst/shop/?action=plugins#/yamodule/');
-        $this->view->assign('ya_market_yml', wa()->getRootUrl(true).'shop/yamodule/price.xml');
-        $this->view->assign('ya_pokupki_link', wa()->getRootUrl(true).'shop/pokupki');
+        $this->view->assign('ya_market_yml', wa()->getRouteUrl('shop/frontend', array('module' => 'yamodule', 'action'=>'market'), true));
+        $this->view->assign('ya_pokupki_link', wa()->getRouteUrl('shop/frontend',array(), true).'yamodule/pokupki');
         $this->view->assign('ya_currencies', $currencies);
         $this->view->assign('treeCat', $this->treeCat());
 
@@ -87,7 +87,7 @@ class shopYamodulePluginSettingsAction extends waViewAction {
         $this->view->assign($settings);
     }
 
-	public final function getRelayUrl($force_https = null)
+	public final function getRelayUrl($force_https = true)
     {
         $url = wa()->getRootUrl(true).'payments.php/yamodulepay/';
         if ($force_https) {
