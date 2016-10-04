@@ -350,9 +350,11 @@ class shopYamodulePlugin extends shopPlugin {
 		));
 
 		$html = '';
-		if (isset($mws_payment['orderNumber']) && $mws_payment['orderNumber'])
-			$html['info_section'] = $view->fetch($this->path.'/templates/actions/settings/tabs_return.html');
-
+		if (isset($mws_payment['orderNumber']) && $mws_payment['orderNumber']){
+            $html['info_section'] = $view->fetch($this->path.'/templates/actions/settings/tabs_return.html');
+        }else{
+            $html['info_section'] = _w("Error MWS: ").$mws->txt_error;
+        }
 		return $html;
 	}
 

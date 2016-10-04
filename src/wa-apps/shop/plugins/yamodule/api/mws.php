@@ -8,6 +8,7 @@ Class Mws
 	public $demo = false;
 	public $txt_request;
 	public $txt_respond;
+	public $txt_error;
 	public $sum = 0;
 
 	public function addReturn($data){
@@ -266,7 +267,7 @@ Class Mws
 	  curl_setopt($ch, CURLOPT_SSLCERT, $this->rwTmpFile($this->CertPem));
 	  curl_setopt($ch, CURLOPT_SSLKEY, $this->rwTmpFile($this->PkeyPem));
 	  $content = curl_exec($ch);
-	  // print_r(curl_error($ch));
+      $this->txt_error = curl_error($ch);
 	  curl_close($ch);
 	  return $content;
 	}
