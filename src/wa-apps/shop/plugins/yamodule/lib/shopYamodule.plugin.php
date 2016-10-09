@@ -312,6 +312,11 @@ class shopYamodulePlugin extends shopPlugin {
 		{
 			$order_model = new shopOrderModel();
 			$order = $order_model->getById($id_order);
+
+            $order_params_model = new shopOrderParamsModel();
+            $payment_plugin = $order_params_model->getOne($order['id'], 'payment_plugin');
+            if ($payment_plugin != 'yamodulepay') return false;
+
 			$sm = new waAppSettingsModel();
 			$data = $sm->get('shop.yamodule');
 
@@ -320,6 +325,8 @@ class shopYamodulePlugin extends shopPlugin {
 			$mws->shopId = $data['ya_kassa_shopid'];
 			$mws->PkeyPem = isset($data['yamodule_mws_pkey']) ? $data['yamodule_mws_pkey'] : '';
 			$mws->CertPem = isset($data['yamodule_mws_cert']) ? $data['yamodule_mws_cert'] : '';
+
+            if ($mws->CertPem == '' || $mws->PkeyPem == '') return false;
 
 			$model = new shopPluginModel();
 			$loaded_plugin = $model->getByField('plugin', 'yamodulepay');

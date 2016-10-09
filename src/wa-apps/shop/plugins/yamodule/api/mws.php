@@ -257,9 +257,9 @@ Class Mws
 	  curl_setopt($ch, CURLOPT_HEADER, 0);
 	  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	  curl_setopt($ch, CURLOPT_ENCODING, "");
-	  curl_setopt($ch, CURLOPT_USERAGENT, "Opera/9.80 (Windows NT 6.1; WOW64) Presto/2.12.388 Version/12.14");  // useragent
-	  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 120);
-	  curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+	  curl_setopt($ch, CURLOPT_USERAGENT, "Y.CMS Client");  // useragent
+	  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 20);
+	  curl_setopt($ch, CURLOPT_TIMEOUT, 20);
 	  curl_setopt($ch, CURLOPT_POST, 1);
 	  curl_setopt($ch, CURLOPT_POSTFIELDS, $xml);
 	  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -267,7 +267,9 @@ Class Mws
 	  curl_setopt($ch, CURLOPT_SSLCERT, $this->rwTmpFile($this->CertPem));
 	  curl_setopt($ch, CURLOPT_SSLKEY, $this->rwTmpFile($this->PkeyPem));
 	  $content = curl_exec($ch);
-      $this->txt_error = curl_error($ch);
+      $this->txt_error = curl_error($ch).
+          "<br> http-code: ".curl_getinfo($ch, CURLINFO_HTTP_CODE).
+          "<br> body: <pre>".$content."</pre>";
 	  curl_close($ch);
 	  return $content;
 	}
