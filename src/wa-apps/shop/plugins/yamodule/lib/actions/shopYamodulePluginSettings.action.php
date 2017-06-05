@@ -65,6 +65,17 @@ class shopYamodulePluginSettingsAction extends waViewAction {
 		$ff = new shopFeatureModel();
 		$ya_features = $ff->getAll();
 
+		$taxModel = new shopTaxModel();
+		$taxes = $taxModel->getAll();
+        $this->view->assign('taxes', $taxes);
+
+        if (isset($settings['taxValues'])) {
+            @$val = unserialize($settings['taxValues']);
+            if (is_array($val)) {
+                $this->view->assign($val);
+            }
+        }
+
         $this->view->assign('ya_features', $ya_features);
         $this->view->assign('ya_kassa_methods', $methods);
         $this->view->assign('ya_kassa_check', $this->getRelayUrl(true));

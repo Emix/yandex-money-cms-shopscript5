@@ -61,6 +61,52 @@ class yamodulepayPayment extends waPayment implements waIPayment
         return 'RUB';
     }
 
+    private function extendItems(&$order)
+    {
+        $items = $order->items;
+        $product_model = new shopProductModel();
+        $discount = $order->discount;
+        foreach ($items as & $item) {
+            $data = $product_model->getById($item['product_id']);
+            $item['tax_id'] = ifset($data['tax_id']);
+            $item['currency'] = $order->currency;
+            if (!empty($item['total_discount'])) {
+                $discount -= $item['total_discount'];
+                $item['total'] -= $item['total_discount'];
+                $item['price'] -= $item['total_discount'] / $item['quantity'];
+            }
+        }
+
+        unset($item);
+
+        $discount_rate = $order->total ? ($order->discount / ($order->total + $order->discount - $order->tax - $order->shipping)) : 0;
+
+        $taxes_params = array(
+            'billing'  => $order->billing_address,
+            'shipping' => $order->shipping_address,
+            'discount_rate' => $discount_rate
+        );
+        shopTaxes::apply($items, $taxes_params, $order->currency);
+
+        if ($discount) {
+            $k = 1 - $discount_rate;
+
+            foreach ($items as & $item) {
+                if ($item['tax_included']) {
+                    $item['tax'] = round($k * $item['tax'], 4);
+                }
+
+                $item['price'] = round($k * $item['price'], 4);
+                $item['total'] = round($k * $item['total'], 4);
+            }
+
+            unset($item);
+        }
+
+        $order->items = $items;
+        return $items;
+    }
+
     public function payment($payment_form_data, $order_data, $auto_submit = false)
     {
         $order_data = waOrder::factory($order_data);
@@ -101,6 +147,66 @@ class yamodulepayPayment extends waPayment implements waIPayment
 				'shopFailUrl' => wa()->getRootUrl(true).'payments.php/yamodulepay/?result=fail',
 				'cms_name' => 'ya_webasyst'
 			);
+
+			if (isset($data['ya_kassa_send_check']) && $data['ya_kassa_send_check']) {
+                $taxValues = array();
+                $order_model = new shopOrderModel();
+                $order = $order_model->getById($order_data['order_id']);
+
+                $items = $this->extendItems($order_data);
+                $emails = (new waContactEmailsModel())->getEmails($order['contact_id']);
+
+                $email = '';
+                if (count($emails)) {
+                    foreach ($emails as $erow) {
+                        if (!empty($erow['value'])) {
+                            $email = $erow['value'];
+                            break;
+                        }
+                    }
+                }
+
+                if (isset($data['taxValues'])) {
+                    @$val = unserialize($data['taxValues']);
+                    if (is_array($val)) {
+                        $taxValues = $val;
+                    }
+                }
+
+                $receipt = array(
+                    'customerContact' => $email,
+                    'items' => array(),
+                );
+
+                foreach ($items as $product) {
+                    $id_tax = $product['tax_id'];
+                    $receipt['items'][] = array(
+                        'quantity' => $product['quantity'],
+                        'text' => substr($product['name'], 0, 128),
+                        'tax' => ($taxValues['ya_kassa_tax_'.$id_tax] ? $taxValues['ya_kassa_tax_'.$id_tax] : 1),
+                        'price' => array(
+                            'amount' => number_format($product['price'] + ($product['tax']/$product['quantity']), 2, '.', ''),
+                            'currency' => 'RUB'
+                        ),
+                    );
+                }
+
+                if ($order_data['shipping'] > 0) {
+                    $receipt['items'][] = array(
+                        'quantity' => 1,
+                        'text' => substr($order_data['shipping_name'], 0, 128),
+                        'tax' => 1,
+                        'price' => array(
+                            'amount' => number_format($order_data['shipping'], 2, '.', ''),
+                            'currency' => 'RUB'
+                        ),
+                    );
+                }
+
+                if ($receipt) {
+                    $hidden_fields['ym_merchant_receipt'] = json_encode($receipt);
+                }
+            }
 
 			if ($data['ya_kassa_test'])
 				$yclass->test = true;

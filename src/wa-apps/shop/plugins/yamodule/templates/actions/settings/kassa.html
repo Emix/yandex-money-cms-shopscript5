@@ -145,9 +145,67 @@
 		</div>
 	</div>
 	<div class="field">
+		<div class="name">
+			<label for="ya_kassa_send_check">[`Отправлять в Яндекс.Кассу данные для чеков (54-ФЗ)`]</label>
+		</div>
+		<div class="value">
+			<input {if $ya_kassa_send_check} checked="checked" {/if} id="ya_kassa_send_check" type="radio" name="ya_kassa_send_check" class="input" value="1">
+			<label for="ya_kassa_send_check">[`Включить`]</label><br/>
+			<input {if !$ya_kassa_send_check} checked="checked" {/if} id="ya_kassa_send_check" type="radio" name="ya_kassa_send_check" class="input" value="0">
+			<label for="ya_kassa_send_check">[`Отключить`]</label><br/>
+			<span class="help-block">[`Отправлять в Яндекс.Кассу данные для чеков (54-ФЗ)`]</span>
+		</div>
+	</div>
+	<div class="tax_settings" style="display: none; padding-left: 200px;">
+		<div class="field">
+			<div class="name">
+				<label for="ya_kassa_tax_">[`Ставка в вашем магазине.`]</label>
+			</div>
+			<div class="value">
+				<span class="help-block">[`Слева — ставка НДС в вашем магазине, справа — в Яндекс.Кассе. Пожалуйста, сопоставьте их.`]</span>
+			</div>
+		</div>
+		{foreach $taxes as $tax}
+		<div class="field">
+			<div class="name">
+				<label for="ya_kassa_tax_{$tax['id']}">{$tax['name']} [`Передавать в Яндекс.Кассу как`]</label>
+			</div>
+			<div class="value">
+				<select name="ya_kassa_tax_{$tax['id']}" class=" fixed-width-xl" id="ya_kassa_tax_{$tax['id']}">
+					<option {if isset($ya_kassa_tax_{$tax['id']}) && $ya_kassa_tax_{$tax['id']} && $ya_kassa_tax_{$tax['id']} == 1} selected="selected" {/if} value="1">Без НДС</option>
+					<option {if isset($ya_kassa_tax_{$tax['id']}) && $ya_kassa_tax_{$tax['id']} && $ya_kassa_tax_{$tax['id']} == 2} selected="selected" {/if} value="2">0%</option>
+					<option {if isset($ya_kassa_tax_{$tax['id']}) && $ya_kassa_tax_{$tax['id']} && $ya_kassa_tax_{$tax['id']} == 3} selected="selected" {/if} value="3" selected="selected">10%</option>
+					<option {if isset($ya_kassa_tax_{$tax['id']}) && $ya_kassa_tax_{$tax['id']} && $ya_kassa_tax_{$tax['id']} == 4} selected="selected" {/if} value="4">18%</option>
+					<option {if isset($ya_kassa_tax_{$tax['id']}) && $ya_kassa_tax_{$tax['id']} && $ya_kassa_tax_{$tax['id']} == 5} selected="selected" {/if} value="5">Расчётная ставка 10/110</option>
+					<option {if isset($ya_kassa_tax_{$tax['id']}) && $ya_kassa_tax_{$tax['id']} && $ya_kassa_tax_{$tax['id']} == 6} selected="selected" {/if} value="6">Расчётная ставка 18/118</option>
+				</select>
+			</div>
+		</div>
+		{/foreach}
+	</div>
+	<div class="field">
 		<div class="value submit save_data">
 			<input type="submit" class="button green" value="Save">
 			<span id="plugins-settings-form-status" style="display:none"><!-- message placeholder --></span>
 		</div>
 	</div>
 </form>
+<script>
+    function hideTaxes() {
+        var inside = $('input[name="ya_kassa_send_check"]:checked').val();
+
+        if (inside == 1)
+        {
+            $('.tax_settings').slideDown('slow');
+        } else {
+            $('.tax_settings').slideUp('slow');
+        }
+    }
+
+	$(document).ready(function(){
+        hideTaxes();
+        $('input[name="ya_kassa_send_check"]').change(function(){
+            hideTaxes();
+        });
+	});
+</script>

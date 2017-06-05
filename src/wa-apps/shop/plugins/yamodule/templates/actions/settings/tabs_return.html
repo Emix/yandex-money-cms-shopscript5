@@ -40,22 +40,152 @@
 			<td>[`Возвращено`]</td>
 			<td>{shop_currency_html($return_total)}</td>
 		</tr>
-		<tr>
-			<td>[`Сумма возврата`]</td>
-			<td style="width: 350px;">
-				<div class="input-group">
-					<span class="input-group-addon"> руб </span>
-					<input type="text" name="return_sum" class='control-form' value="{$total - $return_total}" id="return_sum" />
-				</div>
-			</td>
-		</tr>
-		  <tr>
-			 <td>[`Причина возврата`]</td>
-			 <td><textarea class='control-form' name='return_cause'></textarea></td>
-		  </tr>
-		  <tr>
-			 <td colspan='2'><button type='button' class='submit_return_button btn btn-success'>[`Сделать возврат`]</button></td>
-		  </tr>
+			{if $products|count < 1 && $ya_kassa_send_check}
+
+			{else}
+			<tr>
+				<td>[`Сумма возврата`]</td>
+				<td style="width: 350px;">
+					<div class="input-group">
+						<span class="input-group-addon"> руб </span>
+						{if $ya_kassa_send_check}
+							<input type="text" name="return_sum_front" disabled class='control-form return_sum return_disabled' value="{$total - $return_total}" id="return_sum" />
+							<input type="hidden" name="return_sum" class='control-form return_sum return_hidden' value="{$total - $return_total}" id="return_sum" />
+						{else}
+							<input type="text" name="return_sum" class='control-form return_sum' value="{$total - $return_total}" id="return_sum" />
+						{/if}
+					</div>
+				</td>
+			</tr>
+			  <tr>
+				 <td>[`Причина возврата`]</td>
+				 <td><textarea class='control-form' name='return_cause'></textarea></td>
+			  </tr>
+			{if $ya_kassa_send_check}
+				<tr>
+					<td></td>
+					<td>
+						<label><input checked type="radio" name="fullreturn" value="1" style="margin-left: 10px;"/> Полный возврат</label>
+						<label><input {if $products|count < 1} disabled {/if} type="radio" name="fullreturn" value="0" style="margin-left: 10px;"/> Частичный возврат</label>
+					</td>
+				</tr>
+					<tr class="product-list" style="display: none;">
+						<td colspan="2">
+							<label>Товары, которые будут удалены из чека</label>
+							<script>
+								$(document).ready(function(){
+									updPrice();
+
+									$('input[name="fullreturn"]').on('change', function () {
+										var value = $('input[name="fullreturn"]:checked').val();
+										if (value == 1) {
+											$('.product-list').hide();
+										} else {
+											$('.product-list').show();
+										}
+
+										updPrice();
+									});
+									$('input[name="fullreturn"]').trigger('change');
+
+									$('.removeProduct').click(function(e) {
+										$(this).parent().parent().remove();
+										updPrice();
+									});
+
+									$('.qty_change').click(function(e) {
+										e.preventDefault();
+										var value = parseInt($(this).parent().find('input.nshow').first().val());
+										var min = parseInt($(this).attr('min'));
+										var max = parseInt($(this).attr('max'));
+
+										if ($(this).hasClass('up')) {
+											value++;
+										}
+
+										if ($(this).hasClass('down')) {
+											value--;
+										}
+
+										if (value < min) {
+											return false;
+										}
+										if (value > max) {
+											return false;
+										}
+
+										$(this).parent().find('input').val(value);
+										updPrice();
+										return false;
+									});
+
+									function updPrice() {
+										var sum = 0;
+										$('input.summa').each(function() {
+											var qty = parseFloat($(this).parent().parent().find('input.nshow').val());
+											sum += parseFloat($(this).val()) * qty;
+										});
+
+										$('.return_sum').val(sum.toFixed(2));
+									}
+								});
+							</script>
+							<input type="hidden" class="email" value="{$id_order}" name="id_order"/>
+							<input type="hidden" class="email" value="{$email}" name="email"/>
+							<table style="width:100%;" class="list">
+								<tbody>
+								{foreach $products as $product}
+								<tr>
+									<td>{$product['name']}</td>
+									<td>
+										<div style="display: flex;">
+											<button class="qty_change down" max="{$product['quantity']}" min="0"> - </button>
+											<input class="show" disabled style="text-align: center;width:60px;" type="text" value="{$product['quantity']}" />
+											<input class="nshow" type="hidden" value="{$product['quantity']}" name="items[{$product['product_id']}_{$product['sku_id']}][quantity]" />
+											<button class="qty_change up" max="{$product['quantity']}" min="0"> + </button>
+										</div>
+									</td>
+									<td>
+										<a class="removeProduct" style="text-decoration: underline; cursor: pointer;">Оставить в чеке</a>
+										<input type="hidden" class="summa" value="{$product['price'] + $product['tax']/$product['quantity']}" name="items[{$product['product_id']}_{$product['sku_id']}][price][amount]"/>
+										<input type="hidden" value="{$product['product_id']}" name="items[{$product['product_id']}_{$product['sku_id']}][id]"/>
+										<input type="hidden" value="{$product['id']}" name="items[{$product['product_id']}_{$product['sku_id']}][id_order_product]"/>
+										<input type="hidden" value="{$product['name']|truncate:'128'}" name="items[{$product['product_id']}_{$product['sku_id']}][text]"/>
+										<input type="hidden" value="643" name="items[{$product['product_id']}_{$product['sku_id']}][price][currency]"/>
+										<input type="hidden" value="{if isset($taxValues["ya_kassa_tax_{$product['tax_id']}"])}{$taxValues["ya_kassa_tax_{$product['tax_id']}"]}{else}1{/if}" name="items[{$product['product_id']}_{$product['sku_id']}][tax]"/>
+									</td>
+								</tr>
+								{/foreach}
+								{if $shipping}
+								<tr>
+									<td>Доставка</td>
+									<td>
+										<div style="display: flex;">
+											<button class="qty_change down" max="1" min="0"> - </button>
+											<input class="show" disabled style="text-align: center;width:60px;" type="text" value="1" />
+											<input class="nshow" type="hidden" value="1" name="items[shipping][quantity]" />
+											<button class="qty_change up" max="1" min="0"> + </button>
+										</div>
+									</td>
+									<td>
+										<a class="removeProduct" style="text-decoration: underline; cursor: pointer;">Оставить в чеке</a>
+										<input type="hidden" value="0" name="items[shipping][id_order_product]"/>
+										<input type="hidden" class="summa" value="{$shipping}" name="items[shipping][price][amount]"/>
+										<input type="hidden" value="643" name="items[shipping][price][currency]"/>
+										<input type="hidden" value="0" name="items[shipping][tax]"/>
+										<input type="hidden" value="Доставка" name="items[shipping][text]"/>
+									</td>
+								</tr>
+								{/if}
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				{/if}
+			  <tr>
+				 <td colspan='2'><button type='button' class='submit_return_button btn btn-success'>[`Сделать возврат`]</button></td>
+			  </tr>
+			{/if}
 		{else}
 			<tr>
 				<td colspan='3'><div class='alert alert-danger'>[`Информация по платежу отсутствует. Причиной может быть ошибочный сертификат по работе с MWS или настройки модуля Яндекс.Касса`]</div></td>
@@ -145,3 +275,9 @@ $(document).ready(function(){
 	});
 })
 </script>
+
+<style>
+	table.list td {
+		padding:5px;
+	}
+</style>

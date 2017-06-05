@@ -130,6 +130,21 @@ class shopYamodulePlugin extends shopPlugin {
 
 							if($mws_return['status'] == 0) {
 								$success = true;
+
+                                $dbm = new waModel();
+                                if (isset($_POST['items']) && is_array($_POST['items'])) {
+                                    foreach ($_POST['items'] as $item) {
+                                        if ($item['quantity'] < 1) {
+                                            continue;
+                                        }
+
+                                        $dbm->query('
+                                            INSERT IGNORE INTO `shop_mws_return_product`
+                                            (`id_order`, `id_order_product`, `quantity`)
+                                            VALUES ("'.$id_order.'", "'.$item["id_order_product"].'", "'.$item["quantity"].'")
+                                         ');
+                                    }
+                                }
 							} else {
 								$errors[] = $mws->getErr($mws_return['error']);
 							}
@@ -141,13 +156,23 @@ class shopYamodulePlugin extends shopPlugin {
 			return array('mws_return' => isset($mws_return) ? $mws_return : '', 'errors' => $errors);
 		}
 
+        $taxValues = array();
 		foreach ($_POST as $k => $v)
 		{
+		    if (strpos($k, 'ya_kassa_tax_') !== false) {
+                $taxValues[$k] = $v;
+                continue;
+            }
+
 			if ($k == 'ya_pokupki_carrier' || $k == 'ya_pokupki_rate' || $k == 'ya_market_categories')
 				$v = serialize($v);
 
 			$sm->set('shop.yamodule' , $k, $v);
 		}
+
+		if ($taxValues) {
+            $sm->set('shop.yamodule' , taxValues, serialize($taxValues));
+        }
 
 		$array_fields = array(
 			'ya_kassa_shopid' => _w('Не заполнен Shop Id'),
@@ -302,6 +327,51 @@ class shopYamodulePlugin extends shopPlugin {
 		fclose($h);
 	}
 
+    private function extendItems($order, $items)
+    {
+        $order = (object)$order;
+        $product_model = new shopProductModel();
+        $discount = $order->discount;
+        foreach ($items as & $item) {
+            $data = $product_model->getById($item['product_id']);
+            $item['tax_id'] = ifset($data['tax_id']);
+            $item['currency'] = $order->currency;
+            if (!empty($item['total_discount'])) {
+                $discount -= $item['total_discount'];
+                $item['total'] -= $item['total_discount'];
+                $item['price'] -= $item['total_discount'] / $item['quantity'];
+            }
+        }
+
+        unset($item);
+
+        $discount_rate = $order->total ? ($order->discount / ($order->total + $order->discount - $order->tax - $order->shipping)) : 0;
+
+        $taxes_params = array(
+            'billing'  => $order->billing_address,
+            'shipping' => $order->shipping_address,
+            'discount_rate' => $discount_rate
+        );
+        shopTaxes::apply($items, $taxes_params, $order->currency);
+
+        if ($discount) {
+            $k = 1 - $discount_rate;
+
+            foreach ($items as & $item) {
+                if ($item['tax_included']) {
+                    $item['tax'] = round($k * $item['tax'], 4);
+                }
+
+                $item['price'] = round($k * $item['price'], 4);
+                $item['total'] = round($k * $item['total'], 4);
+            }
+
+            unset($item);
+        }
+
+        return $items;
+    }
+
     public function kassaOrderReturn() {
 		require_once dirname(__FILE__).'/../api/mws.php';
 		$view = wa()->getView();
@@ -312,6 +382,7 @@ class shopYamodulePlugin extends shopPlugin {
 		{
 			$order_model = new shopOrderModel();
 			$order = $order_model->getById($id_order);
+			$shipping = $order['shipping'];
 
             $order_params_model = new shopOrderParamsModel();
             $payment_plugin = $order_params_model->getOne($order['id'], 'payment_plugin');
@@ -343,6 +414,63 @@ class shopYamodulePlugin extends shopPlugin {
 		$ri = $mws->getSuccessReturns($inv);
 		$sum_returned = $mws->sum;
 
+		if (@$data['ya_kassa_send_check']) {
+            $taxValues = array();
+            $itemsModel = new shopOrderItemsModel();
+
+            $items = $this->extendItems($order, $itemsModel->getItems($id_order));
+            $emails = (new waContactEmailsModel())->getEmails($order['contact_id']);
+
+            $dbm = new waModel();
+            $mws_products = $dbm->query('SELECT * FROM `shop_mws_return_product` WHERE id_order = '.(int)$id_order)->fetchAll();
+
+            $mws_array = array();
+            foreach ($mws_products as $mws_product) {
+                $mws_array[$mws_product['id_order_product']] = $mws_product['quantity'];
+
+                if (!$mws_product['id_order_product']) {
+                    $shipping = 0;
+                }
+            }
+
+            foreach ($items as $pk => &$pitem) {
+                $pitem['price'] = number_format($pitem['price'], 2, '.', '');
+
+                if (array_key_exists($pitem['id'], $mws_array)) {
+                    $pitem['quantity'] -= (float)$mws_array[$pitem['id']];
+                }
+
+                if ($pitem['quantity'] < 1) {
+                    unset($items[$pk]);
+                }
+            }
+
+            if (empty($items)) {
+                $errors[] = 'Нет товаров для отправки в Яндекс.Касса';
+            }
+
+            $email = '';
+            if (count($emails)) {
+                foreach ($emails as $erow) {
+                    if (!empty($erow['value'])) {
+                        $email = $erow['value'];
+                        break;
+                    }
+                }
+            }
+
+            if (isset($data['taxValues'])) {
+                @$val = unserialize($data['taxValues']);
+                if (is_array($val)) {
+                    $taxValues = $val;
+                }
+            }
+        } else {
+		    $items = array();
+		    $email = '';
+		    $taxValues = array();
+        }
+
 		$view->assign(array(
 			'return_total' => ($sum_returned),
 			'return_sum' => ($inv_sum - $sum_returned),
@@ -353,7 +481,14 @@ class shopYamodulePlugin extends shopPlugin {
 			'total' => $inv_sum,
 			'id_order' => $id_order,
 			'test' => 1,
-			'pym' => $inv
+			'pym' => $inv,
+            'products' => $items,
+            'email' => $email,
+            'taxValues' => $taxValues,
+            'orderTotal' => $order['total'],
+            'taxTotal' => $order['tax'],
+            'shipping' => $shipping,
+            'ya_kassa_send_check' => @$data['ya_kassa_send_check']
 		));
 
 		$html = '';
@@ -362,6 +497,7 @@ class shopYamodulePlugin extends shopPlugin {
         }else{
             $html['info_section'] = _w("Error MWS: ").$mws->txt_error;
         }
+
 		return $html;
 	}
 

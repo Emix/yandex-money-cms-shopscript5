@@ -136,6 +136,13 @@ function limitText(limitField, limitNum) {
     }
 }
 
+function hideTax(val) {
+    if (val == 1) {
+        $('.tax_settings').slideDown();
+    } else {
+        $('.tax_settings').slideUp();
+    }
+}
 
 function trCat(open)
 {
@@ -158,8 +165,18 @@ $(document).ready(function(){
 		trCat(1);
 	else
 		trCat(0);
+
+	if ($('#ya_kassa_send_check:checked').val() == 1)
+		hideTax(1);
+	else
+        hideTax(0);
+
 	$('#ya_market_selected').live('change', function(){
 		trCat($(this).val());
+	});
+
+	$('#ya_kassa_send_check').live('change', function(){
+        hideTax($(this).val());
 	});
 
 	$('.tree-folder-name input').change(function(){

@@ -20,7 +20,7 @@
 {if $kassa}
 <form id="paymentFormKassa" action="{$form_url_kassa}" method="post">
     {foreach $hidden_fields as $name => $value}
-        <input type="hidden" name="{$name}" value="{$value|escape}"/>
+        <input type="hidden" name="{$name}" value='{$value}'/>
     {/foreach}
 
 	{if $inside}

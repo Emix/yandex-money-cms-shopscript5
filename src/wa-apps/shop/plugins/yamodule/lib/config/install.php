@@ -1,6 +1,13 @@
 <?php
 $model = new waModel();
-$sql = 'CREATE TABLE IF NOT EXISTS `shop_pokupki_orders` (
+$sql1 = 'CREATE TABLE IF NOT EXISTS `shop_mws_return_product` (
+		    `id_order` int(10) NOT NULL,
+            `id_order_product` int(10) NOT NULL,
+            `quantity` int(10) NOT NULL,
+            PRIMARY KEY  (`id_order`,`id_order_detail`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+
+$sql2 = 'CREATE TABLE IF NOT EXISTS `shop_pokupki_orders` (
 		  `id_order` int(10) NOT NULL,
 		  `id_market_order` varchar(100) NOT NULL,
 		  `currency` varchar(100) NOT NULL,
@@ -25,7 +32,8 @@ $sql_mws = 'CREATE TABLE IF NOT EXISTS `shop_mws_return`
 			PRIMARY KEY  (`id_return`,`invoice_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci';
 
-$s = $model->query($sql);
+$s = $model->query($sql1);
+$s = $model->query($sql2);
 $s_mws = $model->query($sql_mws);
 
 $plugin_id = array('shop', 'yamodule');

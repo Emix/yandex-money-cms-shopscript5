@@ -287,6 +287,56 @@ Class Mws
 	private function createXml($array, $operation){
 		 $domDocument = new DOMDocument('1.0', 'UTF-8');
 		 $domElement = $domDocument->createElement($operation."Request");
+
+        if ($operation == 'returnPayment') {
+            $receiptContainer = $domDocument->createElement("receipt");
+            $itemsContainer = $domDocument->createElement("items");
+
+            $emailAttribute = $domDocument->createAttribute('email');
+            $emailAttribute->value = $_POST['email'];
+
+            $receiptContainer->appendChild($emailAttribute);
+            $receiptContainer->appendChild($itemsContainer);
+
+            if (isset($_POST['items']) && is_array($_POST['items'])) {
+                foreach ($_POST['items'] as $item) {
+                    if ($item['quantity'] < 1) {
+                        continue;
+                    }
+
+                    $itemContainer = $domDocument->createElement("item");
+                    $priceContainer = $domDocument->createElement('price');
+
+                    $qtyAttribute = $domDocument->createAttribute('quantity');
+                    $qtyAttribute->value = (int)$item['quantity'];
+
+                    $taxAttribute = $domDocument->createAttribute('tax');
+                    $taxAttribute->value = (int)$item['tax'];
+
+                    $textAttribute = $domDocument->createAttribute('text');
+                    $textAttribute->value = $item['text'];
+
+                    $amountAttribute = $domDocument->createAttribute('amount');
+                    $amountAttribute->value = number_format($item['price']['amount'], 2, '.', '');
+
+                    $currencyAttribute = $domDocument->createAttribute('currency');
+                    $currencyAttribute->value = $item['price']['currency'];
+
+                    $priceContainer->appendChild($amountAttribute);
+                    $priceContainer->appendChild($currencyAttribute);
+
+                    $itemContainer->appendChild($qtyAttribute);
+                    $itemContainer->appendChild($taxAttribute);
+                    $itemContainer->appendChild($textAttribute);
+                    $itemContainer->appendChild($priceContainer);
+
+                    $itemsContainer->appendChild($itemContainer);
+                }
+            }
+
+            $domElement->appendChild($receiptContainer);
+        }
+
 		 foreach ($array as $name=>$val){
 			$domAttribute = $domDocument->createAttribute($name);
 			$domAttribute->value = $val;
