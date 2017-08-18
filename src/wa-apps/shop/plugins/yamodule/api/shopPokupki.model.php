@@ -11,8 +11,8 @@ class shopPokupkiModel extends waModel
         
         return $data;
     }
-	
-	public function getById($id)
+
+    public function getById($id)
     {
         $data = $this->query("SELECT * FROM `{$this->table}` WHERE id_market_order = ".(int)$id)->fetchRow();
         

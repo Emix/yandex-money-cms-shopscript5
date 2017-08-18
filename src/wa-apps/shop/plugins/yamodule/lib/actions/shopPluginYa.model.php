@@ -10,7 +10,7 @@ class shopPluginYaModel extends shopPluginModel
      */
     public function listPlugins($type, $options = array())
     {
-		waSystem::dieMod($this);
+        waSystem::dieMod($this);
         $fields = array(
             'type' => $type,
         );
