@@ -177,7 +177,7 @@ class shopYamodulePluginFrontendActions extends waActions
 
                             if($type == 'PICKUP')
                             {
-                                require_once __DIR__.'/../../../api/pokupki.php';
+                                require_once dirname(__FILE__).'/../../../api/pokupki.php';
                                 $pclass = new YaPokupki();
                                 $pclass->app_id = $settings['ya_pokupki_appid'];
                                 $pclass->url = $settings['ya_pokupki_url'];
@@ -255,7 +255,7 @@ class shopYamodulePluginFrontendActions extends waActions
                 {
                     $data = json_decode($json);
 
-                    require_once __DIR__.'/../../../api/shopPokupki.model.php';
+                    require_once dirname(__FILE__).'/../../../api/shopPokupki.model.php';
                     $model = new shopPokupkiModel();
 
                     if ($type == 'status')
@@ -440,7 +440,7 @@ class shopYamodulePluginFrontendActions extends waActions
 
     public function marketAction()
     {
-        require_once __DIR__.'/../../../api/market.php';
+        require_once dirname(__FILE__).'/../../../api/market.php';
         $plugin = wa()->getPlugin('yamodule');
         $sm = new waAppSettingsModel();
         $settings = $sm->get('shop.yamodule');

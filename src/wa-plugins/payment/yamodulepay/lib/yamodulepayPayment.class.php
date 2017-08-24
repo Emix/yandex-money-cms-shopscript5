@@ -32,7 +32,7 @@ class yamodulepayPayment extends waPayment implements waIPayment
     /** @var int Temporary technical problems */
     const XML_TEMPORAL_PROBLEMS = 1000;
 
-    private $version = '1.3';
+    private $version = '1.3.2';
     private $order_id;
     private $request;
 
@@ -97,7 +97,7 @@ class yamodulepayPayment extends waPayment implements waIPayment
             );
         }
 
-        require_once __DIR__.'/../api/yamoney.php';
+        require_once dirname(__FILE__).'/../api/yamoney.php';
 
         $app_m = new waAppSettingsModel();
         $yclass = new YandexMoney();
@@ -165,8 +165,8 @@ class yamodulepayPayment extends waPayment implements waIPayment
      */
     protected function callbackHandler($request)
     {
-        require_once __DIR__.'/../api/yamoney.php';
-        require_once __DIR__.'/../../../../wa-apps/shop/lib/model/shopOrder.model.php';
+        require_once dirname(__FILE__).'/../api/yamoney.php';
+        require_once dirname(__FILE__).'/../../../../wa-apps/shop/lib/model/shopOrder.model.php';
         $order_model = new shopOrderModel();
         $order = $order_model->getById($this->order_id ? $this->order_id : wa()->getStorage()->get('shop/order_id'));
         $action = waRequest::post('action');
@@ -399,10 +399,10 @@ class yamodulepayPayment extends waPayment implements waIPayment
     /**
      * @param waOrder $orderData
      * @param array $paymentInfo
-     * @param YandexMoney $plagin
+     * @param YandexMoney $plugin
      * @param waSmarty3View $view
      */
-    private function assignKassaVariables($orderData, $paymentInfo, $plagin, $view)
+    private function assignKassaVariables($orderData, $paymentInfo, $plugin, $view)
     {
         $customer_contact = new waContact($orderData['customer_contact_id']);
         $phone = $customer_contact->get('phone');
@@ -420,13 +420,14 @@ class yamodulepayPayment extends waPayment implements waIPayment
             'cms_name' => 'ya_webasyst'
         );
 
-        if (isset($data['ya_kassa_send_check']) && $data['ya_kassa_send_check']) {
+        if (isset($paymentInfo['ya_kassa_send_check']) && $paymentInfo['ya_kassa_send_check']) {
             $taxValues = array();
             $order_model = new shopOrderModel();
             $order = $order_model->getById($orderData['order_id']);
 
             $items = $this->extendItems($orderData);
-            $emails = (new waContactEmailsModel())->getEmails($order['contact_id']);
+            $model = new waContactEmailsModel();
+            $emails = $model->getEmails($order['contact_id']);
 
             $email = '';
             if (count($emails)) {
@@ -438,52 +439,38 @@ class yamodulepayPayment extends waPayment implements waIPayment
                 }
             }
 
-            if (isset($data['taxValues'])) {
-                @$val = unserialize($data['taxValues']);
+            if (isset($paymentInfo['taxValues'])) {
+                @$val = unserialize($paymentInfo['taxValues']);
                 if (is_array($val)) {
                     $taxValues = $val;
                 }
             }
 
-            $receipt = array(
-                'customerContact' => $email,
-                'items' => array(),
-            );
-
+            require_once dirname(__FILE__) . '/YandexMoneyReceipt.php';
+            $receipt = new YandexMoneyReceipt(1, 'RUB');
+            $receipt->setCustomerContact($email);
             foreach ($items as $product) {
-                $id_tax = $product['tax_id'];
-                $receipt['items'][] = array(
-                    'quantity' => $product['quantity'],
-                    'text' => substr($product['name'], 0, 128),
-                    'tax' => ($taxValues['ya_kassa_tax_'.$id_tax] ? $taxValues['ya_kassa_tax_'.$id_tax] : 1),
-                    'price' => array(
-                        'amount' => number_format($product['price'] + ($product['tax']/$product['quantity']), 2, '.', ''),
-                        'currency' => 'RUB'
-                    ),
-                );
+                $taxId = 'ya_kassa_tax_'.$product['tax_id'];
+                $price = $product['price'] + ($product['tax'] / $product['quantity']);
+                if (isset($taxValues[$taxId])) {
+                    $receipt->addItem($product['name'], $price, $product['quantity'], $taxValues[$taxId]);
+                } else {
+                    $receipt->addItem($product['name'], $price, $product['quantity']);
+                }
             }
 
             if ($orderData['shipping'] > 0) {
-                $receipt['items'][] = array(
-                    'quantity' => 1,
-                    'text' => substr($orderData['shipping_name'], 0, 128),
-                    'tax' => 1,
-                    'price' => array(
-                        'amount' => number_format($orderData['shipping'], 2, '.', ''),
-                        'currency' => 'RUB'
-                    ),
-                );
+                $receipt->addShipping($orderData['shipping_name'], $orderData['shipping'], 1);
             }
-
-            if ($receipt) {
-                $hidden_fields['ym_merchant_receipt'] = json_encode($receipt);
-            }
+            $view->assign('ym_merchant_receipt', $receipt->normalize($orderData['amount'])->getJson());
+        } else {
+            $view->assign('ym_merchant_receipt', null);
         }
 
         if ($paymentInfo['ya_kassa_test']) {
-            $plagin->test = true;
+            $plugin->test = true;
         }
-        $view->assign('form_url_kassa', $plagin->getEndpointUrl());
+        $view->assign('form_url_kassa', $plugin->getEndpointUrl());
         $view->assign('inside', $paymentInfo['ya_kassa_inside']);
         $view->assign('paylogo', $paymentInfo['ya_kassa_paylogo']);
         $view->assign('alfa', $paymentInfo['ya_kassa_alfa']);
@@ -504,10 +491,10 @@ class yamodulepayPayment extends waPayment implements waIPayment
     /**
      * @param waOrder $orderData
      * @param array $paymentInfo
-     * @param YandexMoney $plagin
+     * @param YandexMoney $plugin
      * @param waSmarty3View $view
      */
-    private function assignBillingVariables($orderData, $paymentInfo, $plagin, $view)
+    private function assignBillingVariables($orderData, $paymentInfo, $plugin, $view)
     {
         $fio = array();
         $customer = new waContact($orderData['customer_contact_id']);

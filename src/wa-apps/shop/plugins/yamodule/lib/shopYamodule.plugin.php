@@ -443,7 +443,8 @@ class shopYamodulePlugin extends shopPlugin {
             $itemsModel = new shopOrderItemsModel();
 
             $items = $this->extendItems($order, $itemsModel->getItems($id_order));
-            $emails = (new waContactEmailsModel())->getEmails($order['contact_id']);
+            $model = new waContactEmailsModel();
+            $emails = $model->getEmails($order['contact_id']);
 
             $dbm = new waModel();
             $mws_products = $dbm->query('SELECT * FROM `shop_mws_return_product` WHERE id_order = '.(int)$id_order)->fetchAll();

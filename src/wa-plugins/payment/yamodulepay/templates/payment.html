@@ -93,7 +93,6 @@
 			<td><label for="ym11">[`Оплата через доверительный платеж (Куппи.ру).`]</label></td>
 		</tr>
 		{/if}
-		
 		</tbody>
 	</table>
 	<input id="paymentFormSubmit"  type="submit" value="[`Оплатить заказ на сайте Яндекс.Денег`]"/>
@@ -112,6 +111,9 @@
 			<br/>
 			<br/>
 		{/if}
+	{/if}
+	{if $ym_merchant_receipt}
+	<textarea name="ym_merchant_receipt" style="display:none;">{$ym_merchant_receipt}</textarea>
 	{/if}
 </form>
 <script>
