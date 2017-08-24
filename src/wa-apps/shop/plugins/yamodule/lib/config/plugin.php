@@ -1,7 +1,7 @@
 <?php
 
 return array(
-    'name' => 'Y.CMS Shop-Script (1.2.5)',
+    'name' => 'Y.CMS Shop-Script (1.3.2)',
     'description' => 'Набор модулей Яндекс (Яндекс.Деньги, Яндекс.Маркет, Яндекс.Метрика)',
     'vendor' => '98765',
     'version' => '1.3.2',
