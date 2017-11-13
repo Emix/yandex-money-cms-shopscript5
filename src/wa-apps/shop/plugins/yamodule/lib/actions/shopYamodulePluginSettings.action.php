@@ -36,6 +36,29 @@ class shopYamodulePluginSettingsAction extends waViewAction {
             return false;
     }
 
+    private function getServerIp()
+    {
+        $url = 'http://ipv4.internet.yandex.net/internet/api/v0/ip';
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_FAILONERROR, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 9);
+        curl_setopt($ch, CURLOPT_POST, 0);
+        $result = curl_exec($ch);
+        $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        if ($status == 200) {
+            $data = json_decode($result);
+            if (is_string($data)) {
+                return $data;
+            }
+        }
+        return 'Не удалось определить IP адрес';
+    }
+
     public function execute()
     {
         $sm = new waAppSettingsModel();
@@ -79,6 +102,27 @@ class shopYamodulePluginSettingsAction extends waViewAction {
             }
         }
 
+        $newIpAddress = $this->getServerIp();
+        if (!isset($settings['mws_ip_address'])) {
+            $settings['mws_ip_address'] = $newIpAddress;
+            $sm->set($this->plugin_id, 'mws_ip_address', $newIpAddress);
+            unset($_SESSION['ya_mws_ip_counter']);
+        } else {
+            $oldIpAddress = $settings['mws_ip_address'];
+            if ($oldIpAddress !== $newIpAddress) {
+                if (!isset($_SESSION['ya_mws_ip_counter'])) {
+                    $_SESSION['ya_mws_ip_counter'] = 1;
+                } else {
+                    $_SESSION['ya_mws_ip_counter'] += 1;
+                    if ($_SESSION['ya_mws_ip_counter'] > 2) {
+                        $settings['mws_ip_address'] = $newIpAddress;
+                        $sm->set($this->plugin_id, 'mws_ip_address', $newIpAddress);
+                        unset($_SESSION['ya_mws_ip_counter']);
+                    }
+                }
+            }
+        }
+
         $this->view->assign('ya_features', $ya_features);
         $this->view->assign('ya_kassa_methods', $methods);
         $this->view->assign('ya_kassa_check', $this->getRelayUrl(true));
@@ -97,6 +141,8 @@ class shopYamodulePluginSettingsAction extends waViewAction {
         $this->view->assign('mws_cn', '/business/ss5/yacms-'.$settings['ya_kassa_shopid']);
         $this->view->assign('mws_sign', isset($settings['yamodule_mws_csr_sign']) ? $settings['yamodule_mws_csr_sign'] : '');
         $this->view->assign('mws_cert', isset($settings['yamodule_mws_cert']) && !empty($settings['yamodule_mws_cert']) ? 1 : 0);
+        $this->view->assign('mws_server_ip', $newIpAddress);
+        $this->view->assign('mws_server_old_ip', $settings['mws_ip_address']);
 
         $this->view->assign('ya_billing_active', empty($settings['ya_billing_active']) ? false : true);
         $this->view->assign('ya_billing_id', empty($settings['ya_billing_id']) ? '' : $settings['ya_billing_id']);

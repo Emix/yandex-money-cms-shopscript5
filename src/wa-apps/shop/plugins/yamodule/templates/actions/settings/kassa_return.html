@@ -52,6 +52,16 @@
                     </table>
                 </div>
             </div>
+
+            <div class="form-group without-cert field">
+                <label class="name col-sm-3 control-label" style="width: 165px;">[`IP-адрес сервера`]</label>
+                <div class="col-sm-9 value">
+                    <p>{$mws_server_ip}</p>
+                    {if $mws_server_old_ip != $mws_server_ip}
+                    <p>IP-адрес Вашего сервера изменился с {$mws_server_old_ip} на {$mws_server_ip}.</p>
+                    {/if}
+                </div>
+            </div>
         </form>
     {/if}
 {else}
