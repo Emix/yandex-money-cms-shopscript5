@@ -460,7 +460,7 @@ class shopYamodulePluginFrontendActions extends waActions
         $version = wa()->getVersion('shop');
         $phone = $config->getGeneralSettings('phone');
         $root = trim(wa()->getRootUrl(true), '/');
-        $market->set_shop($settings['ya_market_name'], $config->getGeneralSettings('name'), $url, $version, $phone);
+        $market->set_shop($settings['ya_market_name'], $config->getGeneralSettings('name'), $url, $phone, $version);
 
         //---------------Currencies------------------------//
         $price_currency = isset($settings['ya_market_currency']) ? $settings['ya_market_currency'] : 'RUB';
